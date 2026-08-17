@@ -173,7 +173,8 @@ export function shouldServeMarkdown(request: Request, options: MarkdownNegotiati
  */
 export function getMarkdownResponseHeaders(
   options: MarkdownNegotiationOptions = {},
-  existingHeaders?: Headers
+  existingHeaders?: Headers,
+  markdownBody?: string
 ): Headers {
   const headers = new Headers(existingHeaders);
 
@@ -187,6 +188,11 @@ export function getMarkdownResponseHeaders(
     } else if (!currentVary.toLowerCase().includes('accept')) {
       headers.set('Vary', `${currentVary}, Accept`);
     }
+  }
+
+  if (markdownBody && options.setTokenHeader !== false) {
+    const tokens = Math.ceil(markdownBody.length / 4);
+    headers.set('x-markdown-tokens', String(tokens));
   }
 
   return headers;

@@ -136,6 +136,12 @@ export interface MarkdownNegotiationOptions {
    * @default true
    */
   setVaryHeader?: boolean;
+
+  /**
+   * Set the x-markdown-tokens header with an estimated token count on markdown responses.
+   * @default true
+   */
+  setTokenHeader?: boolean;
 }
 
 export interface HtmlToMarkdownOptions extends Omit<MarkdownNegotiationOptions, 'generateStaticFiles' | 'staticFilePattern'> {

@@ -61,6 +61,7 @@ describe('Astro Markdown Middleware', () => {
     expect(res.status).toBe(200);
     expect(res.headers.get('Content-Type')).toBe('text/markdown; charset=utf-8');
     expect(res.headers.get('Vary')).toContain('Accept');
+    expect(res.headers.get('x-markdown-tokens')).toBeDefined();
 
     const body = await res.text();
     expect(body).toContain('# Hello World');

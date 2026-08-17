@@ -105,7 +105,7 @@ export function createMarkdownMiddleware(options: MarkdownNegotiationOptions = {
           url: url ? url.href : undefined,
         });
 
-        const headers = getMarkdownResponseHeaders(mergedOptions, response.headers);
+        const headers = getMarkdownResponseHeaders(mergedOptions, response.headers, markdown);
 
         return new Response(markdown, {
           status: response.status,

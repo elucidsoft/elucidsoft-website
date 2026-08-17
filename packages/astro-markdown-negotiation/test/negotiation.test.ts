@@ -150,5 +150,11 @@ describe('Content Negotiation', () => {
       expect(headers.get('Vary')).toBe('User-Agent, Accept');
       expect(headers.get('Cache-Control')).toBe('max-age=3600');
     });
+
+    it('sets x-markdown-tokens header when markdown body is provided', () => {
+      const sampleText = '# Hello World\nThis is a sample markdown text.';
+      const headers = getMarkdownResponseHeaders({}, undefined, sampleText);
+      expect(headers.get('x-markdown-tokens')).toBe(String(Math.ceil(sampleText.length / 4)));
+    });
   });
 });
