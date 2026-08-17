@@ -86,6 +86,7 @@ const ogImage = absolute(image ?? ogCardFor(path));
 
 <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
 <link rel="alternate" type="application/rss+xml" href="/news/rss.xml" title={`${COMPANY.legalName} news`} />
+<link rel="api-catalog" type="application/linkset+json" href="/.well-known/api-catalog" />
 <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
 
 {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />}

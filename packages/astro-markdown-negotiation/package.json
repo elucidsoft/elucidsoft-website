@@ -1,0 +1,72 @@
+{
+  "name": "@elucidsoft/astro-markdown-negotiation",
+  "version": "1.0.0",
+  "description": "Reusable Astro layer and middleware for automatic HTML-to-Markdown conversion with HTTP content negotiation (Accept: text/markdown)",
+  "type": "module",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./middleware": {
+      "types": "./src/middleware.ts",
+      "import": "./src/middleware.ts",
+      "default": "./src/middleware.ts"
+    },
+    "./converter": {
+      "types": "./src/converter.ts",
+      "import": "./src/converter.ts",
+      "default": "./src/converter.ts"
+    },
+    "./negotiation": {
+      "types": "./src/negotiation.ts",
+      "import": "./src/negotiation.ts",
+      "default": "./src/negotiation.ts"
+    },
+    "./static": {
+      "types": "./src/static.ts",
+      "import": "./src/static.ts",
+      "default": "./src/static.ts"
+    },
+    "./edge": {
+      "types": "./src/edge.ts",
+      "import": "./src/edge.ts",
+      "default": "./src/edge.ts"
+    },
+    "./types": {
+      "types": "./src/types.ts",
+      "import": "./src/types.ts",
+      "default": "./src/types.ts"
+    }
+  },
+  "keywords": [
+    "astro",
+    "astro-integration",
+    "markdown",
+    "content-negotiation",
+    "accept-header",
+    "text-markdown",
+    "ai-agents",
+    "llm",
+    "html-to-markdown"
+  ],
+  "author": "Elucidsoft LLC",
+  "license": "MIT",
+  "peerDependencies": {
+    "astro": ">=4.0.0 || >=5.0.0"
+  },
+  "dependencies": {
+    "parse5": "^7.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "test": "bun test"
+  }
+}

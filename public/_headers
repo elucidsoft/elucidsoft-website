@@ -1,0 +1,33 @@
+/*
+  X-Content-Type-Options: nosniff
+  Vary: Accept
+
+/
+  Link: </.well-known/api-catalog>; rel="api-catalog", </llms.txt>; rel="describedby"; type="text/plain", </auth.md>; rel="service-doc"; type="text/markdown", </.well-known/oauth-protected-resource>; rel="service-desc"; type="application/json"
+
+/index.html
+  Link: </.well-known/api-catalog>; rel="api-catalog", </llms.txt>; rel="describedby"; type="text/plain", </auth.md>; rel="service-doc"; type="text/markdown", </.well-known/oauth-protected-resource>; rel="service-desc"; type="application/json"
+
+/.well-known/api-catalog
+  Content-Type: application/linkset+json; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/.well-known/oauth-protected-resource
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/.well-known/oauth-authorization-server
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/auth.md
+  Content-Type: text/markdown; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/llms-full.txt
+  Content-Type: text/plain; charset=utf-8
+  Access-Control-Allow-Origin: *

@@ -1,0 +1,69 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://api.cloudlayer.io/v2",
+      "service-desc": [
+        {
+          "href": "https://api.cloudlayer.io/v2/openapi.json",
+          "type": "application/json",
+          "title": "cloudlayer.io REST API OpenAPI v3 Specification (JSON)"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://cloudlayer.io/docs/",
+          "type": "text/html",
+          "title": "cloudlayer.io Document & Image Generation API Documentation"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://status.cloudlayer.io",
+          "type": "text/html",
+          "title": "cloudlayer.io Service Status & Uptime"
+        }
+      ]
+    },
+    {
+      "anchor": "https://api.upstat.io/v1",
+      "service-desc": [
+        {
+          "href": "https://api.upstat.io/v1/openapi.json",
+          "type": "application/json",
+          "title": "Upstat Incident Management API OpenAPI Specification (JSON)"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://upstat.io/docs/",
+          "type": "text/html",
+          "title": "Upstat Incident Management & Intelligence API Documentation"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://status.upstat.io",
+          "type": "text/html",
+          "title": "Upstat Service Status"
+        }
+      ]
+    },
+    {
+      "anchor": "https://elucidsoft.com/api",
+      "service-doc": [
+        {
+          "href": "https://elucidsoft.com/facts/",
+          "type": "text/html",
+          "title": "Elucidsoft LLC Corporate Ground Truth & Entity Information"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://elucidsoft.com/",
+          "type": "text/html",
+          "title": "Elucidsoft LLC Corporate Portal"
+        }
+      ]
+    }
+  ]
+}

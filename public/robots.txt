@@ -13,6 +13,7 @@
 # Token list verified against vendor documentation, August 2026.
 
 User-agent: *
+Content-Signal: ai-train=yes, search=yes, ai-input=yes
 Allow: /
 
 # --- Search and citation crawlers for AI answer engines ---------------------

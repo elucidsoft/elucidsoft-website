@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import svelte from '@astrojs/svelte';
 import sitemap from '@astrojs/sitemap';
+import markdownNegotiation from '@elucidsoft/astro-markdown-negotiation';
 
 /**
  * Paged news routes declare `noindex, follow` in their <head>. Submitting them
@@ -18,6 +19,11 @@ export default defineConfig({
     svelte(),
     sitemap({
       filter: (page) => !PAGED_ROUTE.test(page),
+    }),
+    markdownNegotiation({
+      metadata: 'header',
+      generateStaticFiles: true,
+      staticFilePattern: 'both',
     }),
   ],
   markdown: {
