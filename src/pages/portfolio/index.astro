@@ -1,0 +1,172 @@
+---
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import BrandCard from '../../components/BrandCard.astro';
+import { COPY } from '../../data/copy';
+import {
+  PRODUCTS,
+  SAAS_PRODUCTS,
+  OSS_PRODUCTS,
+  DIVISION_LABEL,
+  STAGE_LABEL,
+} from '../../data/portfolio';
+import { COMPANY } from '../../data/company';
+import { graph, organizationSchema } from '../../lib/schema';
+import { breadcrumbSchema } from '../../lib/seo';
+
+const summaryFor = (slug: string) =>
+  COPY.PRODUCTS[slug as keyof typeof COPY.PRODUCTS].summary;
+
+const jsonLd = graph(
+  organizationSchema(),
+  breadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: COPY.PORTFOLIO.title, href: '/portfolio' },
+  ]),
+  {
+    '@type': 'CollectionPage',
+    name: COPY.PORTFOLIO.title,
+    description: COPY.PORTFOLIO.metaDescription,
+  },
+);
+---
+
+<Base
+  title={COPY.PORTFOLIO.metaTitle}
+  description={COPY.PORTFOLIO.metaDescription}
+  jsonLd={jsonLd}
+>
+  <Section eyebrow={COPY.PORTFOLIO.eyebrow} title={COPY.PORTFOLIO.title} as="h1">
+    <p class="lead" slot="head">{COPY.PORTFOLIO.lead}</p>
+
+    <div class="division">
+      <div class="division__head">
+        <h2 class="division__title">{DIVISION_LABEL.saas}</h2>
+        <p class="division__note">{COPY.PORTFOLIO.saasIntro}</p>
+      </div>
+      <div class="cards cards--two">
+        {
+          SAAS_PRODUCTS.map((product) => (
+            <BrandCard product={product} summary={summaryFor(product.slug)} featured />
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="division">
+      <div class="division__head">
+        <h2 class="division__title">{DIVISION_LABEL.oss}</h2>
+        <p class="division__note">{COPY.PORTFOLIO.ossIntro}</p>
+      </div>
+      <div class="cards cards--four">
+        {
+          OSS_PRODUCTS.map((product) => (
+            <BrandCard product={product} summary={summaryFor(product.slug)} />
+          ))
+        }
+      </div>
+    </div>
+  </Section>
+
+  <!--
+    The same six products again as a table. A card grid answers "what are
+    they"; a table answers "how do they compare", which is the question a
+    reader who scrolled this far is actually asking.
+  -->
+  <Section tone="raised" eyebrow="Summary" title="All six at a glance">
+    <div class="table-scroll">
+      <table class="data">
+        <caption class="visually-hidden">
+          Every product operated or published by {COMPANY.legalName}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Division</th>
+            <th scope="col">Category</th>
+            <th scope="col">Stage</th>
+            <th scope="col">Licence</th>
+            <th scope="col">Site</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            PRODUCTS.map((product) => (
+              <tr>
+                <th scope="row">
+                  <a class="link" href={`/portfolio/${product.slug}/`}>
+                    {product.name}
+                  </a>
+                </th>
+                <td>{DIVISION_LABEL[product.division]}</td>
+                <td>{product.category}</td>
+                <td>{STAGE_LABEL[product.stage]}</td>
+                <td class="mono">{product.license ?? '—'}</td>
+                <td>
+                  <a class="link" href={product.url} rel="noopener">
+                    {product.displayUrl}
+                  </a>
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </Section>
+</Base>
+
+<style>
+  .division + .division {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  .division__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 1.25rem;
+    margin-bottom: 1.35rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .division__title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.008em;
+    color: var(--text-primary);
+  }
+
+  .division__note {
+    font-size: 0.9375rem;
+    color: var(--text-tertiary);
+    max-width: 62ch;
+  }
+
+  .cards {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .cards--two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cards--four {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  @media (max-width: 1080px) {
+    .cards--four {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .cards--two,
+    .cards--four {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

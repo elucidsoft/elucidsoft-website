@@ -1,0 +1,186 @@
+---
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import { COPY } from '../../data/copy';
+import { COMPANY, JURISDICTION, ORG_ID } from '../../data/company';
+import { PRODUCTS, DIVISION_LABEL, STAGE_LABEL } from '../../data/portfolio';
+import { graph, organizationSchema } from '../../lib/schema';
+import { breadcrumbSchema, buildCanonical } from '../../lib/seo';
+import IconArrow from '../../components/IconArrow.astro';
+
+const jsonLd = graph(
+  organizationSchema(),
+  {
+    '@type': 'AboutPage',
+    '@id': `${buildCanonical('/about')}#page`,
+    name: COPY.ABOUT.title,
+    description: COPY.ABOUT.metaDescription,
+    mainEntity: { '@id': ORG_ID },
+  },
+  breadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: COPY.ABOUT.title, href: '/about' },
+  ]),
+);
+---
+
+<Base title={COPY.ABOUT.metaTitle} description={COPY.ABOUT.metaDescription} jsonLd={jsonLd}>
+  <Section eyebrow={COPY.ABOUT.eyebrow} title={COPY.ABOUT.title} as="h1">
+    <p class="lead" slot="head">{COPY.ABOUT.lead}</p>
+  </Section>
+
+  <Section tone="raised" eyebrow="Entity" title={COPY.ABOUT.structureTitle}>
+    <div class="two-col">
+      <div class="prose">
+        {COPY.ABOUT.structureBody.map((para) => <p>{para}</p>)}
+      </div>
+
+      <div class="record">
+        <h3 class="label record__head">At a glance</h3>
+        <dl class="defs">
+          <div class="defs__row">
+            <dt class="defs__key">Legal name</dt>
+            <dd class="defs__val">{COMPANY.legalName}</dd>
+          </div>
+          <div class="defs__row">
+            <dt class="defs__key">Founder</dt>
+            <dd class="defs__val">
+              <a class="link" href={COMPANY.founder.url} rel="noopener" target="_blank">
+                {COMPANY.founder.name} <IconArrow direction="up-right" size={14} />
+              </a>
+            </dd>
+          </div>
+          <div class="defs__row">
+            <dt class="defs__key">Based in</dt>
+            <dd class="defs__val">{JURISDICTION}</dd>
+          </div>
+          <div class="defs__row">
+            <dt class="defs__key">Trade names</dt>
+            <dd class="defs__val">{COMPANY.tradeNames.join(', ')}</dd>
+          </div>
+          <div class="defs__row">
+            <dt class="defs__key">Operating since</dt>
+            <dd class="defs__val">{COMPANY.foundingYear}</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </Section>
+
+  <Section eyebrow="Divisions" title="How the six sit together">
+    <div class="table-scroll">
+      <table class="data">
+        <caption class="visually-hidden">
+          Products operated by {COMPANY.legalName}, by division
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Division</th>
+            <th scope="col">Relationship to the LLC</th>
+            <th scope="col">Stage</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            PRODUCTS.map((product) => (
+              <tr>
+                <th scope="row">
+                  <a class="link" href={`/portfolio/${product.slug}/`}>
+                    {product.name}
+                  </a>
+                </th>
+                <td>{DIVISION_LABEL[product.division]}</td>
+                <td>{product.relationship === 'dba' ? 'Registered trade name' : 'Published project'}</td>
+                <td>{STAGE_LABEL[product.stage]}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </Section>
+
+  <Section tone="raised" eyebrow="Practice" title={COPY.ABOUT.principlesTitle}>
+    <ol class="principles">
+      {
+        COPY.ABOUT.principles.map((principle, i) => (
+          <li class="principle">
+            <span class="principle__num mono" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <div>
+              <h3 class="principle__title display">{principle.title}</h3>
+              <p class="principle__body">{principle.body}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+</Base>
+
+<style>
+  .record {
+    border-left: 1px solid var(--rule);
+    padding-left: clamp(1.25rem, 2.5vw, 2rem);
+  }
+
+  .record__head {
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .principles {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .principle {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+    gap: 1rem;
+    padding-block: clamp(1.35rem, 3vw, 2rem);
+    border-bottom: 1px solid var(--rule-faint);
+  }
+
+  .principle__num {
+    font-size: var(--label-size);
+    letter-spacing: var(--label-tracking);
+    color: var(--text-quaternary);
+    padding-top: 0.45em;
+  }
+
+  .principle__title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .principle__body {
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    max-width: 62ch;
+    text-wrap: pretty;
+  }
+
+  @media (max-width: 860px) {
+    .record {
+      border-left: none;
+      padding-left: 0;
+      border-top: 1px solid var(--rule);
+      padding-top: 1.5rem;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .principle {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.5rem;
+    }
+    .principle__num {
+      padding-top: 0;
+    }
+  }
+</style>

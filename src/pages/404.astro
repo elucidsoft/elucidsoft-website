@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import { COPY } from '../data/copy';
+import LogoRow from '../components/LogoRow.astro';
+---
+
+<Base
+  title="Page not found | Elucidsoft"
+  description="That page could not be found on elucidsoft.com. The six products in the Elucidsoft portfolio are listed here so a mistyped URL still leads somewhere."
+  robots="noindex, follow"
+  allowShortTitle
+>
+  <Section eyebrow={COPY.NOT_FOUND.eyebrow} title={COPY.NOT_FOUND.title} as="h1">
+    <p class="lead" slot="head">{COPY.NOT_FOUND.body}</p>
+
+    <LogoRow />
+
+    <p class="back">
+      <a href="/" class="btn">{COPY.NOT_FOUND.cta}</a>
+    </p>
+  </Section>
+</Base>
+
+<style>
+  .back {
+    margin-top: 2.25rem;
+  }
+</style>

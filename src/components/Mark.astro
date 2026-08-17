@@ -1,0 +1,87 @@
+---
+/**
+ * The Elucidsoft mark, rebuilt as vector.
+ *
+ * Geometry is measured from the source raster (217424-square.png) rather than
+ * traced by eye: the three "E" bars sit on a 47-unit pitch at y=153/200/246 in
+ * a 400-unit box, every stroke is 23 units wide with round caps, and the "S" is
+ * a single stroked polyline. Reproducing it as one path per glyph means the
+ * mark stays sharp at a 16px favicon and at a 1200px OG card, and the gradient
+ * ramps across the real height of the artwork instead of the bounding box.
+ *
+ * TWO FRAMINGS. The source artwork is an app icon: the glyphs occupy only the
+ * middle of a 400-unit square, with the rest reserved for the rounded field
+ * behind them. Rendered at a given size that padding makes the mark read far
+ * smaller than the number suggests — a 132px "logo" that draws a 70px glyph.
+ *
+ *   - `variant="icon"` keeps the square framing, for the favicon and anywhere
+ *     the mark sits on its own field.
+ *   - `variant="tight"` (the default) crops the viewBox to the ink extent, so
+ *     `size` describes the width of what is actually drawn. The mark is wider
+ *     than it is tall in this framing, so height is derived rather than passed.
+ */
+interface Props {
+  /** Rendered width in px. In `icon` framing this is also the height. */
+  size?: number;
+  /** Unique suffix for the gradient id; required when several marks co-exist. */
+  id?: string;
+  variant?: 'tight' | 'icon';
+  /** Draw the dark rounded field behind the glyphs. Implies `icon` framing. */
+  field?: boolean;
+  class?: string;
+}
+
+const {
+  size = 32,
+  id = 'mark',
+  variant = 'tight',
+  field = false,
+  class: className,
+} = Astro.props;
+
+const gradId = `elucid-grad-${id}`;
+
+/* Ink extent measured off the source: x 98..309, y 142..257, plus 10 units of
+   optical padding so the round caps never touch the edge. */
+const TIGHT = { x: 88, y: 132, w: 231, h: 135 };
+
+const framed = field || variant === 'icon';
+const viewBox = framed ? '0 0 400 400' : `${TIGHT.x} ${TIGHT.y} ${TIGHT.w} ${TIGHT.h}`;
+const width = size;
+const height = framed ? size : Math.round((size * TIGHT.h) / TIGHT.w);
+---
+
+<svg
+  width={width}
+  height={height}
+  viewBox={viewBox}
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label="Elucidsoft"
+  class={className}
+>
+  <defs>
+    <linearGradient id={gradId} x1="0" y1="142" x2="0" y2="257" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#35C4EF" />
+      <stop offset="0.5" stop-color="#7C8CF5" />
+      <stop offset="1" stop-color="#A25CF7" />
+    </linearGradient>
+  </defs>
+
+  {field && <rect width="400" height="400" rx="88" fill="#0B1020" />}
+
+  <g
+    stroke={`url(#${gradId})`}
+    stroke-width="23"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    {/* E — three bars on a 47-unit pitch */}
+    <path d="M109.5 153h48" />
+    <path d="M109.5 200h48" />
+    <path d="M109.5 246h48" />
+    {/* S — one stroked polyline */}
+    <path d="M298 153H234v47h64v46h-64" />
+  </g>
+</svg>

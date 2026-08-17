@@ -1,0 +1,145 @@
+---
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import ContactForm from '../../components/ContactForm.svelte';
+import { COPY } from '../../data/copy';
+import { COMPANY, CONTACT, JURISDICTION, ORG_ID, SITE_URL } from '../../data/company';
+import { SAAS_PRODUCTS } from '../../data/portfolio';
+import { graph, organizationSchema } from '../../lib/schema';
+import { breadcrumbSchema, buildCanonical } from '../../lib/seo';
+
+const jsonLd = graph(
+  organizationSchema(),
+  {
+    '@type': 'ContactPage',
+    '@id': `${buildCanonical('/contact')}#page`,
+    name: COPY.CONTACT.title,
+    description: COPY.CONTACT.metaDescription,
+    about: { '@id': ORG_ID },
+  },
+  breadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: COPY.CONTACT.title, href: '/contact' },
+  ]),
+);
+---
+
+<Base title={COPY.CONTACT.metaTitle} description={COPY.CONTACT.metaDescription} jsonLd={jsonLd}>
+  <Section eyebrow={COPY.CONTACT.eyebrow} title={COPY.CONTACT.title} as="h1">
+    <p class="lead" slot="head">{COPY.CONTACT.lead}</p>
+
+    <div class="contact">
+      <div class="contact__form">
+        <ContactForm
+          endpoint={CONTACT.endpoint}
+          accessKey={CONTACT.web3formsKey}
+          redirectTo={`${SITE_URL}/contact/?sent=1`}
+          subjectPrefix="Enquiry via elucidsoft.com"
+          labels={{
+            name: COPY.CONTACT.nameLabel,
+            email: COPY.CONTACT.emailLabel,
+            subject: COPY.CONTACT.subjectLabel,
+            message: COPY.CONTACT.messageLabel,
+            submit: COPY.CONTACT.submitLabel,
+            sending: COPY.CONTACT.statusSending,
+            sent: COPY.CONTACT.statusSent,
+            error: COPY.CONTACT.statusError,
+          }}
+          client:load
+        />
+      </div>
+
+      <aside class="contact__aside">
+        <div>
+          <h2 class="label aside__head">{COPY.CONTACT.asideTitle}</h2>
+          <p class="aside__body">{COPY.CONTACT.asideBody}</p>
+          <div class="link-list">
+            {
+              SAAS_PRODUCTS.map((product) => (
+                <a href={product.url} rel="noopener">
+                  <span>{product.name}</span>
+                </a>
+              ))
+            }
+          </div>
+        </div>
+
+        <div>
+          <h2 class="label aside__head">{COPY.CONTACT.channelsTitle}</h2>
+          <div class="link-list">
+            {
+              COMPANY.githubAccounts.map((account) => (
+                <a href={account.url} rel="noopener">
+                  <span class="mono">github.com/{account.label}</span>
+                </a>
+              ))
+            }
+          </div>
+        </div>
+
+        <div>
+          <h2 class="label aside__head">Based in</h2>
+          <p class="aside__address">
+            <strong>{COMPANY.legalName}</strong>
+            <span>{JURISDICTION}</span>
+          </p>
+        </div>
+      </aside>
+    </div>
+  </Section>
+</Base>
+
+<style>
+  .contact {
+    display: grid;
+    grid-template-columns: 1.45fr 0.95fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  .contact__aside {
+    display: grid;
+    gap: clamp(1.75rem, 3.5vw, 2.5rem);
+    border-left: 1px solid var(--rule);
+    padding-left: clamp(1.25rem, 2.5vw, 2rem);
+  }
+
+  .aside__head {
+    display: block;
+    margin-bottom: 0.85rem;
+  }
+
+  .aside__body {
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    margin-bottom: 0.75rem;
+    text-wrap: pretty;
+  }
+
+  .aside__address {
+    display: grid;
+    gap: 0.05rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.7;
+    color: var(--text-tertiary);
+  }
+
+  .aside__address strong {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  @media (max-width: 900px) {
+    .contact {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .contact__aside {
+      border-left: none;
+      padding-left: 0;
+      border-top: 1px solid var(--rule);
+      padding-top: 1.75rem;
+    }
+  }
+</style>

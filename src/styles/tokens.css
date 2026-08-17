@@ -1,0 +1,160 @@
+/*
+ * ELUCIDSOFT — corporate identity
+ * ---------------------------------------------------------------------------
+ * This has to read as a company's own site, not as one person's work.
+ *
+ * That distinction is a genre problem before it is a decoration problem. A
+ * personal portfolio is a monograph: a large display serif, generous air, an
+ * asymmetric column, a literary rhythm, one voice. A holding company's site is
+ * a REPORT: one disciplined typeface in several weights, dense information,
+ * figures set in tables, structural chrome at the top of the page, and a tight
+ * vertical rhythm. Nothing about it should look like it was art-directed for
+ * pleasure — it should look ISSUED.
+ *
+ * So the serif is gone. IBM Plex Sans carries display, text and UI, and Plex
+ * Mono carries anything that is data. One family across the whole site is what
+ * corporate identity systems actually do, and it happens to unify the
+ * portfolio: cloudlayer.io already sets its body in Plex Sans, and warpkit.org
+ * and oriterm.com already set their labels in Plex Mono. The family
+ * resemblance is real rather than asserted.
+ *
+ * CHROMATIC DISCIPLINE is unchanged and still the point. The brand gradient —
+ * cyan to periwinkle to violet, sampled straight off the logo artwork — is
+ * allowed in the mark, in section rules, and in the fill on an active register
+ * row. Nowhere else. It is never a wash behind a headline.
+ */
+
+:root {
+  /* --- Brand -------------------------------------------------------------
+   * Sampled top-to-bottom down the logo's stroke (217424-square.png). The mark
+   * is a single linear ramp, so these three stops reproduce it exactly at any
+   * size.
+   */
+  --brand-cyan: #35c4ef;
+  --brand-periwinkle: #7c8cf5;
+  --brand-violet: #a25cf7;
+  --brand-gradient: linear-gradient(
+    180deg,
+    var(--brand-cyan) 0%,
+    var(--brand-periwinkle) 50%,
+    var(--brand-violet) 100%
+  );
+  --brand-gradient-h: linear-gradient(
+    90deg,
+    var(--brand-cyan) 0%,
+    var(--brand-periwinkle) 50%,
+    var(--brand-violet) 100%
+  );
+
+  /* --- Ground ------------------------------------------------------------
+   * #0B1020 is the logo's own field. Cold and blue on purpose: a warm paper
+   * ground is the editorial register this site is defined against.
+   */
+  --ink-900: #070b16;
+  --ink-850: #0b1020;
+  --ink-800: #0f1526;
+  --ink-750: #141b30;
+  --ink-700: #1b2340;
+
+  /* --- Text --------------------------------------------------------------
+   * Four steps, each clearing WCAG AA (4.5:1) against EVERY ground it is drawn
+   * on — not only the page background. That distinction cost a round: the ramp
+   * was first solved against `--ink-850` alone, and then the figures band and
+   * the card hover state introduced `--ink-800` and `--ink-750`, which are
+   * lighter, and the faintest step quietly fell to 4.2:1 on them. These values
+   * are solved against the lightest surface in use in each theme.
+   *
+   * Spacing is by contrast ratio rather than by even lightness, so the
+   * hierarchy survives the floor being raised.
+   */
+  --text-primary: #e8eaf2;
+  --text-secondary: #a8b0c8;
+  --text-tertiary: #9099b6;
+  --text-quaternary: #7c84a2;
+
+  /* --- Rules -------------------------------------------------------------
+   * The ruled line is the primary structural device, so it gets three weights
+   * of its own rather than borrowing a text colour.
+   */
+  --rule-faint: rgba(168, 176, 200, 0.09);
+  --rule: rgba(168, 176, 200, 0.16);
+  --rule-strong: rgba(168, 176, 200, 0.32);
+
+  --surface-raised: rgba(255, 255, 255, 0.028);
+  --surface-sunken: rgba(0, 0, 0, 0.22);
+
+  /* --- Type --------------------------------------------------------------
+   * One family. Weight and size carry the hierarchy, not a second typeface.
+   */
+  --font-sans:
+    'IBM Plex Sans Variable', 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+  /* Display is the same face, set heavier and tighter. */
+  --font-display: var(--font-sans);
+
+  /* The label system. ONE treatment wherever a label appears. */
+  --label-size: 0.6875rem;
+  --label-tracking: 0.13em;
+  --label-weight: 500;
+
+  /* --- Measure -----------------------------------------------------------
+   * Wider and denser than an editorial column. 1340px carries a six-column
+   * figures strip and a four-column register row without either feeling
+   * stretched.
+   */
+  --measure: 1340px;
+  --measure-text: 72ch;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  /* Width of the numbered left rail. Collapses below the layout break. */
+  --rail: 5rem;
+
+  /* Tighter than the editorial rhythm it replaces. A report does not breathe
+     like an essay. */
+  --section-y: clamp(3.5rem, 8vh, 6rem);
+
+  /* --- Motion ------------------------------------------------------------ */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-rule: cubic-bezier(0.65, 0, 0.35, 1);
+  --t-fast: 160ms;
+  --t-base: 320ms;
+  --t-slow: 640ms;
+
+  color-scheme: dark;
+}
+
+/*
+ * LIGHT THEME
+ *
+ * A corporate site gets printed, forwarded and read in daylight, and its legal
+ * pages get read most of all. This is a real theme rather than an inversion:
+ * a cool near-white rather than a warm paper stock (warm paper is the
+ * editorial register), ink that is not pure black, and darkened brand stops —
+ * the cyan is unreadable on white at its brand value.
+ *
+ * Only tokens are redefined. No component knows which theme it is in.
+ */
+:root[data-theme='light'] {
+  --ink-900: #ffffff;
+  --ink-850: #fafafb;
+  --ink-800: #f2f3f6;
+  --ink-750: #e8eaef;
+  --ink-700: #d9dce4;
+
+  --text-primary: #14161f;
+  --text-secondary: #454b5e;
+  --text-tertiary: #4f566c;
+  --text-quaternary: #62687c;
+
+  --rule-faint: rgba(20, 22, 31, 0.08);
+  --rule: rgba(20, 22, 31, 0.15);
+  --rule-strong: rgba(20, 22, 31, 0.3);
+
+  --surface-raised: rgba(20, 22, 31, 0.025);
+  --surface-sunken: rgba(20, 22, 31, 0.04);
+
+  --brand-cyan: #0e7490;
+  --brand-periwinkle: #4f56c4;
+  --brand-violet: #7c3aed;
+
+  color-scheme: light;
+}

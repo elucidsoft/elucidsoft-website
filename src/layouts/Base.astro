@@ -1,0 +1,62 @@
+---
+import Head from '../components/Head.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description: string;
+  robots?: string;
+  image?: string;
+  imageAlt?: string;
+  ogType?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  canonicalOverride?: string;
+  jsonLd?: unknown;
+  allowShortTitle?: boolean;
+  /** Suppresses the footer's own top rule when a page already ends in one. */
+  flush?: boolean;
+}
+
+const { flush = false, ...head } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <Head {...head} />
+    <script is:inline>
+      /*
+       * Theme resolution before first paint.
+       *
+       * This has to be inline and synchronous. Deferring it by even one frame
+       * paints the dark ground and then repaints light, which reads as a flash
+       * on every navigation — the single most noticeable bug a themed static
+       * site can ship. localStorage access is wrapped because Safari throws on
+       * it outright in some privacy modes.
+       */
+      (function () {
+        try {
+          var stored = localStorage.getItem('elucid-theme');
+          if (stored === 'light' || stored === 'dark') {
+            document.documentElement.setAttribute('data-theme', stored);
+            return;
+          }
+        } catch (e) {}
+        if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer flush={flush} />
+  </body>
+</html>

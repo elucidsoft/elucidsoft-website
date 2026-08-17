@@ -1,0 +1,229 @@
+---
+/**
+ * Footer.
+ *
+ * Carries three things a corporate umbrella footer has to carry: the full
+ * portfolio as real links, the registered entity, and the
+ * machine-readable surfaces. The last group is unusual on a marketing site
+ * and deliberate — llms.txt, the sitemap and the RSS feed are how this site
+ * is meant to be read by things that are not people, and burying them makes
+ * them undiscoverable to the crawlers that do not guess at paths.
+ */
+import Mark from './Mark.astro';
+import { COMPANY, JURISDICTION } from '../data/company';
+import { PRODUCTS } from '../data/portfolio';
+import { COPY } from '../data/copy';
+
+interface Props {
+  flush?: boolean;
+}
+const { flush = false } = Astro.props;
+
+const year = new Date().getUTCFullYear();
+
+const company = [
+  { href: '/about/', label: 'About' },
+  { href: '/portfolio/', label: 'Products' },
+  { href: '/open-source/', label: 'Open source' },
+  { href: '/news/', label: 'News' },
+  { href: '/contact/', label: 'Contact' },
+  { href: '/facts/', label: 'Facts' },
+];
+
+const machine = [
+  { href: '/llms.txt', label: 'llms.txt' },
+  { href: '/llms-full.txt', label: 'llms-full.txt' },
+  { href: '/news/rss.xml', label: 'RSS' },
+  { href: '/sitemap-index.xml', label: 'Sitemap' },
+];
+
+const legal = [
+  { href: '/privacy/', label: 'Privacy' },
+  { href: '/terms/', label: 'Terms' },
+];
+---
+
+<footer class="foot" data-flush={flush ? '' : undefined}>
+  <div class="wrap">
+    <div class="foot__top">
+      <div class="foot__brand">
+        <Mark size={44} id="foot" />
+        <p class="foot__blurb">{COPY.FOOTER.blurb}</p>
+      </div>
+
+      <div class="foot__cols">
+        <div class="foot__col">
+          <h2 class="label">{COPY.FOOTER.portfolioHeading}</h2>
+          <ul>
+            {
+              PRODUCTS.map((product) => (
+                <li>
+                  <a href={`/portfolio/${product.slug}/`}>{product.name}</a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="foot__col">
+          <h2 class="label">{COPY.FOOTER.companyHeading}</h2>
+          <ul>
+            {company.map((link) => <li><a href={link.href}>{link.label}</a></li>)}
+          </ul>
+        </div>
+
+        <div class="foot__col">
+          <h2 class="label">{COPY.FOOTER.machineHeading}</h2>
+          <ul>
+            {machine.map((link) => <li><a href={link.href}>{link.label}</a></li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot__bottom">
+      <p class="foot__entity">
+        <strong>{COMPANY.legalName}</strong>
+        <span>{JURISDICTION}</span>
+      </p>
+
+      <div class="foot__legal">
+        <p>{COPY.FOOTER.rights.replace('{year}', String(year))}</p>
+        <ul>
+          {legal.map((link) => <li><a href={link.href}>{link.label}</a></li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    border-top: 1px solid var(--rule);
+    padding-block: clamp(3rem, 7vw, 5rem) 2.5rem;
+    margin-top: var(--section-y);
+    position: relative;
+    z-index: 1;
+  }
+
+  .foot[data-flush] {
+    margin-top: 0;
+  }
+
+  .foot__top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  .foot__brand {
+    display: grid;
+    gap: 1.1rem;
+    max-width: 26rem;
+  }
+
+  .foot__blurb {
+    color: var(--text-tertiary);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+
+  .foot__cols {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(7rem, auto));
+    gap: clamp(1.75rem, 4vw, 3.5rem);
+  }
+
+  .foot__col h2 {
+    margin-bottom: 1rem;
+  }
+
+  .foot__col ul {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .foot__col a {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    transition: color var(--t-fast) var(--ease);
+  }
+
+  .foot__col a:hover,
+  .foot__col a:focus-visible {
+    color: var(--text-primary);
+  }
+
+  .foot__bottom {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--rule-faint);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1.75rem;
+  }
+
+  .foot__entity {
+    display: grid;
+    gap: 0.1rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.7;
+    color: var(--text-quaternary);
+  }
+
+  .foot__entity strong {
+    color: var(--text-tertiary);
+    font-weight: 500;
+  }
+
+  .foot__legal {
+    display: grid;
+    gap: 0.6rem;
+    justify-items: end;
+    text-align: right;
+  }
+
+  .foot__legal p {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-quaternary);
+  }
+
+  .foot__legal ul {
+    display: flex;
+    gap: 1.25rem;
+  }
+
+  .foot__legal a {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    transition: color var(--t-fast) var(--ease);
+  }
+
+  .foot__legal a:hover,
+  .foot__legal a:focus-visible {
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 880px) {
+    .foot__top {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .foot__cols {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .foot__legal {
+      justify-items: start;
+      text-align: left;
+    }
+  }
+</style>

@@ -1,0 +1,66 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Section from '../../../components/Section.astro';
+import PostList from '../../../components/PostList.astro';
+import Pagination from '../../../components/Pagination.astro';
+import { COPY } from '../../../data/copy';
+import {
+  getPublished,
+  splitForPaging,
+  pageSlice,
+  type NewsEntry,
+} from '../../../lib/news';
+import { graph, organizationSchema } from '../../../lib/schema';
+import { breadcrumbSchema, buildCanonical } from '../../../lib/seo';
+
+export async function getStaticPaths() {
+  const entries = await getPublished();
+  const { rest, totalPages } = splitForPaging(entries);
+
+  const paths = [];
+  // Starts at 2 on purpose. `/news/page/1/` would be a second address for the
+  // index, competing with it for the same content.
+  for (let page = 2; page <= totalPages; page += 1) {
+    paths.push({
+      params: { page: String(page) },
+      props: { page, totalPages, entries: pageSlice(rest, page) },
+    });
+  }
+  return paths;
+}
+
+interface Props {
+  page: number;
+  totalPages: number;
+  entries: NewsEntry[];
+}
+
+const { page, totalPages, entries }: Props = Astro.props;
+const title = `${COPY.NEWS.title}, page ${page}`;
+
+const jsonLd = graph(
+  organizationSchema(),
+  {
+    '@type': 'CollectionPage',
+    name: title,
+    isPartOf: { '@id': `${buildCanonical('/news')}#blog` },
+  },
+  breadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: COPY.NEWS.title, href: '/news' },
+  ]),
+);
+---
+
+<Base
+  title={`${title} — Elucidsoft LLC`}
+  description={COPY.NEWS.metaDescription}
+  robots="noindex, follow"
+  jsonLd={jsonLd}
+>
+  <Section eyebrow={COPY.NEWS.eyebrow} title={COPY.NEWS.title} as="h1" id="posts">
+    <p class="lead" slot="head">{COPY.NEWS.lead}</p>
+    <PostList entries={entries} />
+    <Pagination page={page} totalPages={totalPages} basePath="/news/" />
+  </Section>
+</Base>

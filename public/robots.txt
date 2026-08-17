@@ -1,0 +1,63 @@
+# robots.txt — elucidsoft.com
+#
+# This is a public corporate site. There is nothing here that is not meant to
+# be read, by a person or by a machine, so every group below allows everything.
+#
+# The per-vendor groups are written out rather than left to the wildcard for
+# two reasons. First, RFC 9309: a crawler that matches a named group ignores
+# the wildcard group entirely, so a directive that only appears under `*` does
+# not apply to it. Second, being explicit records the intent — AI crawlers are
+# permitted here deliberately, and a future edit that changes that should have
+# to change a line that says so.
+#
+# Token list verified against vendor documentation, August 2026.
+
+User-agent: *
+Allow: /
+
+# --- Search and citation crawlers for AI answer engines ---------------------
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# --- Live fetch on behalf of a user asking a question -----------------------
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# --- Training and model-development crawlers -------------------------------
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+Sitemap: https://elucidsoft.com/sitemap-index.xml

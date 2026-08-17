@@ -1,0 +1,60 @@
+name: Deploy
+
+# Full rebuild on every push. The site is a few dozen static pages, so a
+# complete build costs seconds; publishing a news article is a commit.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never cancel a deploy midway, but do not queue up redundant ones either.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - name: Build
+        # buildTitle/buildDescription warn rather than throw so a local build
+        # stays usable while copy is being edited. CI is where that leniency
+        # ends: a title outside 30-65 characters must not reach production.
+        # One build, tee'd — building twice to re-check would double the job
+        # and discard the first run's warnings anyway.
+        run: |
+          set -o pipefail
+          bun run build 2>&1 | tee build.log
+          if grep -q '\[seo\]' build.log; then
+            echo "::error::SEO length warnings present — see the build log above"
+            exit 1
+          fi
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

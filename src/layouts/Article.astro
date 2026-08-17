@@ -1,0 +1,422 @@
+---
+import Base from './Base.astro';
+import TableOfContents from '../components/TableOfContents.svelte';
+import { ORG_ID } from '../data/company';
+import { graph, organizationSchema } from '../lib/schema';
+import { breadcrumbSchema, buildCanonical, absolute } from '../lib/seo';
+import { formatDate, isoDate, newsHref, type NewsEntry } from '../lib/news';
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  entry: NewsEntry;
+  headings: MarkdownHeading[];
+  minutes: number;
+  related: NewsEntry[];
+}
+
+const { entry, headings, minutes, related }: Props = Astro.props;
+const { data } = entry;
+
+const canonical = buildCanonical(newsHref(entry));
+
+/*
+ * Astro gives `slug`; this component's contract is `id`. Mapping here rather
+ * than passing the raw headings through is what keeps every anchor from
+ * rendering as "#undefined".
+ */
+const tocHeadings = headings
+  .filter((h) => h.depth === 2 || h.depth === 3)
+  .map((h) => ({ id: h.slug, depth: h.depth, text: h.text }));
+
+const jsonLd = graph(
+  organizationSchema(),
+  {
+    '@type': 'NewsArticle',
+    '@id': `${canonical}#article`,
+    headline: data.title,
+    description: data.metaDescription,
+    datePublished: isoDate(data.datePublished),
+    dateModified: isoDate(data.dateModified ?? data.datePublished),
+    author: { '@type': 'Person', name: data.author },
+    publisher: { '@id': ORG_ID },
+    mainEntityOfPage: canonical,
+    articleSection: data.category,
+    ...(data.image ? { image: absolute(data.image.src) } : {}),
+  },
+  breadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: 'News', href: '/news' },
+    { name: data.title, href: newsHref(entry) },
+  ]),
+);
+---
+
+<Base
+  title={data.title}
+  description={data.metaDescription}
+  ogType="article"
+  image={data.image?.src}
+  imageAlt={data.image?.alt}
+  publishedTime={isoDate(data.datePublished)}
+  modifiedTime={isoDate(data.dateModified ?? data.datePublished)}
+  jsonLd={jsonLd}
+>
+  <article class="article">
+    <div class="wrap">
+      <header class="article__head">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="/news/">News</a>
+          <span aria-hidden="true">/</span>
+          <span>{data.category}</span>
+        </nav>
+        <h1 class="display display--page">{data.title}</h1>
+        <div class="brand-rule article__rule" data-draw></div>
+        <p class="lead">{data.summary}</p>
+        <p class="article__byline mono">
+          <span>{data.author}</span>
+          <span aria-hidden="true">·</span>
+          <time datetime={isoDate(data.datePublished)}>{formatDate(data.datePublished)}</time>
+          <span aria-hidden="true">·</span>
+          <span>{minutes} min read</span>
+          {
+            data.dateModified && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>Updated {formatDate(data.dateModified)}</span>
+              </>
+            )
+          }
+        </p>
+      </header>
+
+      {
+        data.image && (
+          <img
+            class="article__hero"
+            src={data.image.src}
+            alt={data.image.alt}
+            width={data.image.width}
+            height={data.image.height}
+            loading="eager"
+            decoding="async"
+          />
+        )
+      }
+
+      <div class="article__grid">
+        <div class="article__body prose-long">
+          <slot />
+        </div>
+        <aside class="article__rail">
+          <TableOfContents headings={tocHeadings} label="On this page" client:visible />
+          <p class="article__source mono">
+            <a href={`/news/${data.slug}.md`}>Read as Markdown</a>
+          </p>
+        </aside>
+      </div>
+
+      {
+        related.length > 0 && (
+          <section class="article__related">
+            <h2 class="label">Related</h2>
+            <div class="related-grid">
+              {related.map((item) => (
+                <a class="related-card" href={newsHref(item)}>
+                  <time class="related-card__date" datetime={isoDate(item.data.datePublished)}>
+                    {formatDate(item.data.datePublished)}
+                  </time>
+                  <span class="related-card__title">{item.data.title}</span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )
+      }
+    </div>
+  </article>
+</Base>
+
+<style>
+  .article {
+    padding-block: clamp(3rem, 8vh, 5.5rem) 0;
+  }
+
+  .article__head {
+    max-width: 46rem;
+  }
+
+  .crumbs {
+    display: flex;
+    gap: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: var(--label-size);
+    letter-spacing: var(--label-tracking);
+    text-transform: uppercase;
+    color: var(--text-quaternary);
+    margin-bottom: 1.4rem;
+  }
+
+  .crumbs a {
+    color: var(--text-tertiary);
+  }
+
+  .crumbs a:hover,
+  .crumbs a:focus-visible {
+    color: var(--text-primary);
+  }
+
+  .article__rule {
+    margin-block: clamp(1.25rem, 2.5vw, 1.75rem);
+  }
+
+  .article__byline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+    font-size: var(--label-size);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-quaternary);
+  }
+
+  .article__hero {
+    width: 100%;
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+    border: 1px solid var(--rule-faint);
+  }
+
+  .article__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 46rem) minmax(0, 1fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    align-items: start;
+  }
+
+  .article__rail {
+    display: grid;
+    gap: 1.25rem;
+    position: sticky;
+    top: 6rem;
+  }
+
+  .article__source {
+    font-size: var(--label-size);
+    letter-spacing: var(--label-tracking);
+    text-transform: uppercase;
+    padding-left: 1.1rem;
+  }
+
+  .article__source a {
+    color: var(--text-quaternary);
+    transition: color var(--t-fast) var(--ease);
+  }
+
+  .article__source a:hover,
+  .article__source a:focus-visible {
+    color: var(--text-secondary);
+  }
+
+  .article__related {
+    margin-top: clamp(3rem, 7vw, 5rem);
+    padding-top: 2rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .article__related .label {
+    display: block;
+    margin-bottom: 1.25rem;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    gap: 1rem;
+  }
+
+  .related-card {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1.2rem;
+    border: 1px solid var(--rule);
+    background: var(--surface-raised);
+    transition: border-color var(--t-base) var(--ease);
+  }
+
+  .related-card:hover,
+  .related-card:focus-visible {
+    border-color: var(--rule-strong);
+  }
+
+  .related-card__date {
+    font-family: var(--font-mono);
+    font-size: var(--label-size);
+    letter-spacing: var(--label-tracking);
+    text-transform: uppercase;
+    color: var(--text-quaternary);
+  }
+
+  .related-card__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 1000px) {
+    .article__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .article__rail {
+      position: static;
+      order: -1;
+    }
+  }
+</style>
+
+<style is:global>
+  /*
+   * Markdown body styling. Global because the rendered <slot /> content is not
+   * scoped to this component — Astro cannot add a scope hash to markup it did
+   * not compile.
+   */
+  .prose-long {
+    font-size: 1.0625rem;
+    line-height: 1.72;
+    color: var(--text-secondary);
+  }
+
+  .prose-long > * + * {
+    margin-top: 1.3em;
+  }
+
+  .prose-long h2,
+  .prose-long h3 {
+    font-family: var(--font-display);
+    color: var(--text-primary);
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    margin-top: 2.4em;
+    margin-bottom: 0.7em;
+    scroll-margin-top: 6rem;
+  }
+
+  .prose-long h2 {
+    font-size: 1.65rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--rule-faint);
+  }
+
+  .prose-long h3 {
+    font-size: 1.25rem;
+  }
+
+  .prose-long a {
+    color: var(--text-primary);
+    background-image: linear-gradient(var(--rule-strong), var(--rule-strong));
+    background-size: 100% 1px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    transition: background-image var(--t-base) var(--ease);
+  }
+
+  .prose-long a:hover,
+  .prose-long a:focus-visible {
+    background-image: var(--brand-gradient-h);
+  }
+
+  .prose-long ul,
+  .prose-long ol {
+    padding-left: 1.4rem;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .prose-long ul {
+    list-style: disc;
+  }
+
+  .prose-long ol {
+    list-style: decimal;
+  }
+
+  .prose-long li::marker {
+    color: var(--text-quaternary);
+  }
+
+  .prose-long blockquote {
+    border-left: 2px solid var(--rule-strong);
+    padding-left: 1.2rem;
+    color: var(--text-tertiary);
+    font-style: normal;
+  }
+
+  .prose-long code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: var(--surface-sunken);
+    padding: 0.15em 0.4em;
+    border: 1px solid var(--rule-faint);
+  }
+
+  .prose-long pre {
+    background: var(--surface-sunken);
+    border: 1px solid var(--rule-faint);
+    padding: 1.1rem 1.25rem;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  .prose-long pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  /*
+   * Shiki runs with defaultColor:false, so tokens carry both --shiki-light and
+   * --shiki-dark and the theme switch is a CSS variable swap rather than a
+   * second stylesheet.
+   */
+  :root[data-theme='light'] .astro-code,
+  :root[data-theme='light'] .astro-code span {
+    color: var(--shiki-light) !important;
+    background-color: transparent !important;
+  }
+
+  .astro-code,
+  .astro-code span {
+    color: var(--shiki-dark);
+    background-color: transparent !important;
+  }
+
+  .prose-long img {
+    border: 1px solid var(--rule-faint);
+  }
+
+  .prose-long hr {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin-block: 2.5em;
+  }
+
+  .prose-long table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .prose-long th {
+    text-align: left;
+    border-bottom: 1px solid var(--rule-strong);
+    padding: 0 0.9rem 0.6rem 0;
+    color: var(--text-primary);
+  }
+
+  .prose-long td {
+    border-bottom: 1px solid var(--rule-faint);
+    padding: 0.7rem 0.9rem 0.7rem 0;
+  }
+</style>

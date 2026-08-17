@@ -1,0 +1,165 @@
+---
+/**
+ * /facts/ — the citable record.
+ *
+ * The purpose of this page is to be the thing an answer engine quotes when
+ * asked "what is Elucidsoft" or "is Ori production ready". Marketing pages are
+ * written to persuade and therefore hedge; this page states the entity's
+ * details, every product's stage, licence and version, and — the part that
+ * makes it worth citing — an explicit list of what the company does not claim.
+ *
+ * Everything here renders from the same modules the rest of the site uses, so
+ * it cannot drift from the product pages it is meant to corroborate.
+ */
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import { COPY } from '../../data/copy';
+import { COMPANY, JURISDICTION, ORG_ID } from '../../data/company';
+import { PRODUCTS, SAAS_PRODUCTS, OSS_PRODUCTS, DIVISION_LABEL, STAGE_LABEL } from '../../data/portfolio';
+import { graph, organizationSchema } from '../../lib/schema';
+import { breadcrumbSchema, buildCanonical } from '../../lib/seo';
+import IconArrow from '../../components/IconArrow.astro';
+
+const jsonLd = graph(
+  organizationSchema(),
+  {
+    '@type': 'WebPage',
+    '@id': `${buildCanonical('/facts')}#page`,
+    name: COPY.FACTS.title,
+    description: COPY.FACTS.metaDescription,
+    about: { '@id': ORG_ID },
+  },
+  breadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: COPY.FACTS.title, href: '/facts' },
+  ]),
+);
+
+const entityRows = [
+  { key: 'Entity name', value: COMPANY.legalName },
+  { key: 'Founder', value: COMPANY.founder.name, href: COMPANY.founder.url },
+  { key: 'Operating since', value: String(COMPANY.foundingYear) },
+  { key: 'Based in', value: JURISDICTION },
+  { key: 'Registered trade names', value: COMPANY.tradeNames.join(', ') },
+  { key: 'Products operated', value: `${PRODUCTS.length} (${SAAS_PRODUCTS.length} commercial, ${OSS_PRODUCTS.length} open source)` },
+  { key: 'Website', value: 'elucidsoft.com' },
+];
+---
+
+<Base title={COPY.FACTS.metaTitle} description={COPY.FACTS.metaDescription} jsonLd={jsonLd}>
+  <Section eyebrow={COPY.FACTS.eyebrow} title={COPY.FACTS.title} as="h1">
+    <p class="lead" slot="head">{COPY.FACTS.lead}</p>
+  </Section>
+
+  <Section tone="raised" eyebrow="Record" title={COPY.FACTS.entityTitle}>
+    <dl class="defs">
+      {
+        entityRows.map((row) => (
+          <div class="defs__row">
+            <dt class="defs__key">{row.key}</dt>
+            <dd class="defs__val">
+              {row.href ? (
+                <a class="link" href={row.href} rel="noopener" target="_blank">
+                  {row.value} <IconArrow direction="up-right" size={14} />
+                </a>
+              ) : (
+                row.value
+              )}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </Section>
+
+  <Section eyebrow="Register" title={COPY.FACTS.productsTitle}>
+    <div class="table-scroll">
+      <table class="data">
+        <caption class="visually-hidden">
+          Every product operated or published by {COMPANY.legalName}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Division</th>
+            <th scope="col">Stage</th>
+            <th scope="col">Licence</th>
+            <th scope="col">Version</th>
+            <th scope="col">URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            PRODUCTS.map((product) => (
+              <tr>
+                <th scope="row">{product.name}</th>
+                <td>{DIVISION_LABEL[product.division]}</td>
+                <td>{STAGE_LABEL[product.stage]}</td>
+                <td class="mono">{product.license ?? 'Proprietary'}</td>
+                <td class="mono">{product.version ?? '—'}</td>
+                <td>
+                  <a class="link" href={product.url} rel="noopener">
+                    {product.displayUrl}
+                  </a>
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="note">
+      Versions and licences above are transcribed from each project's own
+      manifest and licence file. Where a product is commercial and closed
+      source, no version is published.
+    </p>
+  </Section>
+
+  <Section tone="raised" eyebrow="Limits" title={COPY.FACTS.notClaimedTitle}>
+    <ul class="not-claimed">
+      {
+        COPY.FACTS.notClaimed.map((claim) => (
+          <li>
+            <span class="not-claimed__mark" aria-hidden="true">
+              ×
+            </span>
+            <span>{claim}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+</Base>
+
+<style>
+  .note {
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--text-tertiary);
+    max-width: 62ch;
+  }
+
+  .not-claimed {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--rule);
+    max-width: 68ch;
+  }
+
+  .not-claimed li {
+    display: grid;
+    grid-template-columns: 1.75rem minmax(0, 1fr);
+    gap: 0.75rem;
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--rule-faint);
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .not-claimed__mark {
+    font-family: var(--font-mono);
+    color: var(--text-quaternary);
+  }
+</style>

@@ -1,0 +1,102 @@
+---
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import PostList from '../../components/PostList.astro';
+import Pagination from '../../components/Pagination.astro';
+import { COPY } from '../../data/copy';
+import { getPublished, splitForPaging, pageSlice, categoriesOf } from '../../lib/news';
+import { graph, organizationSchema } from '../../lib/schema';
+import { breadcrumbSchema, buildCanonical } from '../../lib/seo';
+
+const entries = await getPublished();
+const { featured, rest, totalPages } = splitForPaging(entries);
+const shown = pageSlice(rest, 1);
+const categories = categoriesOf(entries);
+
+const jsonLd = graph(
+  organizationSchema(),
+  {
+    '@type': 'Blog',
+    '@id': `${buildCanonical('/news')}#blog`,
+    name: COPY.NEWS.title,
+    description: COPY.NEWS.metaDescription,
+  },
+  breadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: COPY.NEWS.title, href: '/news' },
+  ]),
+);
+---
+
+<Base title={COPY.NEWS.metaTitle} description={COPY.NEWS.metaDescription} jsonLd={jsonLd}>
+  <Section eyebrow={COPY.NEWS.eyebrow} title={COPY.NEWS.title} as="h1" id="posts">
+    <p class="lead" slot="head">{COPY.NEWS.lead}</p>
+
+    {
+      categories.length > 1 && (
+        <nav class="cats" aria-label="Categories">
+          <span class="label">Categories</span>
+          <ul>
+            {categories.map((cat) => (
+              <li>
+                <a href={`/news/category/${cat.slug}/`}>
+                  {cat.name} <span class="cats__count">{cat.count}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+
+    {
+      entries.length === 0 ? (
+        <p class="empty">{COPY.NEWS.empty}</p>
+      ) : (
+        <>
+          <PostList entries={featured ? [featured, ...shown] : shown} />
+          <Pagination page={1} totalPages={totalPages} basePath="/news/" />
+        </>
+      )
+    }
+  </Section>
+</Base>
+
+<style>
+  .cats {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .cats ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.1rem;
+  }
+
+  .cats a {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    transition: color var(--t-fast) var(--ease);
+  }
+
+  .cats a:hover,
+  .cats a:focus-visible {
+    color: var(--text-primary);
+  }
+
+  .cats__count {
+    color: var(--text-quaternary);
+  }
+
+  .empty {
+    color: var(--text-tertiary);
+    padding-block: 2rem;
+    border-top: 1px solid var(--rule);
+  }
+</style>

@@ -1,0 +1,91 @@
+---
+/**
+ * Every tag that belongs in <head>, in one place.
+ *
+ * Two decisions worth keeping:
+ *
+ * 1. `rel="alternate" type="text/plain"` advertises /llms.txt, and an HTML twin
+ *    exists at /llms.html. Several engines will not index a bare .txt, so the
+ *    machine document is published in both forms and the HTML one carries a
+ *    canonical of its own.
+ * 2. Fonts are imported through @fontsource in global.css so Astro fingerprints
+ *    and inlines the @font-face rules itself. No hand-written <link rel=preload>
+ *    here: the hashed filenames are only known after the build, and a preload
+ *    pointing at a stale hash costs a wasted round trip on every page.
+ */
+import { buildTitle, buildDescription, buildCanonical, absolute, ogCardFor } from '../lib/seo';
+import { COMPANY } from '../data/company';
+
+interface Props {
+  title?: string;
+  description: string;
+  /** `noindex, follow` for paginated slices. */
+  robots?: string;
+  image?: string;
+  imageAlt?: string;
+  ogType?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  canonicalOverride?: string;
+  jsonLd?: unknown;
+  /** Waives the title minimum-length check. See buildTitle. */
+  allowShortTitle?: boolean;
+}
+
+const {
+  title,
+  description,
+  robots = 'index, follow, max-image-preview:large, max-snippet:-1',
+  image,
+  imageAlt = `${COMPANY.legalName}, software company`,
+  ogType = 'website',
+  publishedTime,
+  modifiedTime,
+  canonicalOverride,
+  jsonLd,
+  allowShortTitle = false,
+} = Astro.props;
+
+const path = Astro.url.pathname;
+const canonical = canonicalOverride ?? buildCanonical(path);
+const fullTitle = buildTitle(title, path, allowShortTitle);
+const desc = buildDescription(description, path);
+// An explicit image (an article hero) wins; otherwise the route's own card.
+const ogImage = absolute(image ?? ogCardFor(path));
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{fullTitle}</title>
+<meta name="description" content={desc} />
+<link rel="canonical" href={canonical} />
+<meta name="robots" content={robots} />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/logo.png" />
+<meta name="theme-color" content="#0B1020" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#FBFAF8" media="(prefers-color-scheme: light)" />
+
+<meta property="og:type" content={ogType} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={desc} />
+<meta property="og:url" content={canonical} />
+<meta property="og:site_name" content={COMPANY.legalName} />
+<meta property="og:locale" content="en_US" />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:alt" content={imageAlt} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+{modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={desc} />
+<meta name="twitter:image" content={ogImage} />
+
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
+<link rel="alternate" type="application/rss+xml" href="/news/rss.xml" title={`${COMPANY.legalName} news`} />
+<link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+
+{jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />}

@@ -1,0 +1,49 @@
+---
+/**
+ * A page section.
+ *
+ * This used to render a numbered left rail — "01 —" against a vertical
+ * hairline — which made every page read as a numbered document. That is an
+ * editorial device, it cost five rems of empty gutter on every section, and it
+ * was part of why the site kept reading as a long-form blog. Sections are now
+ * plain: a label, a heading, and the content at full measure.
+ *
+ * `tone` gives the page rhythm. Corporate homepages alternate the ground
+ * between sections so the eye can tell where one ends and the next begins;
+ * a single flat colour end to end reads as one undifferentiated scroll.
+ */
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  /** Renders the title as an h1 where the section is the page head. */
+  as?: 'h1' | 'h2';
+  /** `raised` paints the section on the elevated surface. */
+  tone?: 'base' | 'raised';
+  id?: string;
+  class?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  as: Heading = 'h2',
+  tone = 'base',
+  id,
+  class: className,
+}: Props = Astro.props;
+---
+
+<section class:list={['section', `section--${tone}`, className]} id={id}>
+  <div class="wrap">
+    {
+      (eyebrow || title) && (
+        <header class="section__head">
+          {eyebrow && <span class="label">{eyebrow}</span>}
+          {title && <Heading class="display display--section">{title}</Heading>}
+          <slot name="head" />
+        </header>
+      )
+    }
+    <slot />
+  </div>
+</section>

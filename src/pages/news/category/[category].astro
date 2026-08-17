@@ -1,0 +1,63 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Section from '../../../components/Section.astro';
+import PostList from '../../../components/PostList.astro';
+import { COPY } from '../../../data/copy';
+import { getPublished, categorySlug, type NewsEntry } from '../../../lib/news';
+import { graph, organizationSchema } from '../../../lib/schema';
+import { breadcrumbSchema, buildCanonical } from '../../../lib/seo';
+
+export async function getStaticPaths() {
+  const entries = await getPublished();
+  const byCategory = new Map<string, { name: string; entries: NewsEntry[] }>();
+
+  for (const entry of entries) {
+    const slug = categorySlug(entry.data.category);
+    const bucket = byCategory.get(slug) ?? { name: entry.data.category, entries: [] };
+    bucket.entries.push(entry);
+    byCategory.set(slug, bucket);
+  }
+
+  return [...byCategory.entries()].map(([slug, bucket]) => ({
+    params: { category: slug },
+    props: { name: bucket.name, entries: bucket.entries },
+  }));
+}
+
+interface Props {
+  name: string;
+  entries: NewsEntry[];
+}
+
+const { name, entries }: Props = Astro.props;
+
+const jsonLd = graph(
+  organizationSchema(),
+  {
+    '@type': 'CollectionPage',
+    name: `${name}: ${COPY.NEWS.title}`,
+    isPartOf: { '@id': `${buildCanonical('/news')}#blog` },
+  },
+  breadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: COPY.NEWS.title, href: '/news' },
+    { name, href: `/news/category/${categorySlug(name)}` },
+  ]),
+);
+
+/*
+ * Composed rather than reusing the news index description, which would push
+ * past the 158-character snippet budget once the category name is appended.
+ */
+const description = `Corporate updates and announcements from Elucidsoft filed under ${name}, covering company milestones and product releases.`;
+---
+
+<Base title={`${name} News & Updates`} description={description} jsonLd={jsonLd}>
+  <Section eyebrow="News category" title={name} as="h1" id="posts">
+    <p class="lead" slot="head">
+      Updates from Elucidsoft filed under {name}.
+      <a class="link" href="/news/">All news</a>
+    </p>
+    <PostList entries={entries} />
+  </Section>
+</Base>

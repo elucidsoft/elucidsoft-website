@@ -1,0 +1,370 @@
+---
+/**
+ * Corporate homepage.
+ *
+ * The structure follows how holding-company homepages are actually built
+ * rather than how a designed index page reads: a statement and two calls to
+ * action above the fold, the holdings proved immediately with the products'
+ * real brand marks, a figures band, the portfolio as cards, the structure
+ * explained, news, and a close.
+ *
+ * The previous version listed all six products as a ruled text register with
+ * dot leaders. That is a table of contents, and it is why the page read as a
+ * blog rather than as a company's own site. The brand marks do that work now.
+ */
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import BrandTiles from '../components/BrandTiles.astro';
+import BrandCard from '../components/BrandCard.astro';
+import { COPY } from '../data/copy';
+import { PRODUCTS, SAAS_PRODUCTS, OSS_PRODUCTS } from '../data/portfolio';
+import { COMPANY, JURISDICTION } from '../data/company';
+import { organizationSchema, websiteSchema, graph } from '../lib/schema';
+import { getPublished, formatDate, isoDate, newsHref } from '../lib/news';
+import IconArrow from '../components/IconArrow.astro';
+
+const latest = (await getPublished()).slice(0, 3);
+
+const summaryFor = (slug: string) =>
+  COPY.PRODUCTS[slug as keyof typeof COPY.PRODUCTS].summary;
+
+/* Derived, so the band cannot disagree with the cards below it. */
+const figures = [
+  { value: String(PRODUCTS.length), key: 'Products' },
+  { value: String(SAAS_PRODUCTS.length), key: 'Commercial' },
+  { value: String(OSS_PRODUCTS.length), key: 'Open source' },
+  { value: String(COMPANY.foundingYear), key: 'Operating since' },
+];
+
+const jsonLd = graph(
+  organizationSchema(),
+  websiteSchema(COMPANY.legalName, COPY.SITE.metaDescription),
+);
+---
+
+<Base description={COPY.SITE.metaDescription} jsonLd={jsonLd}>
+  <!--
+    Hero. Centred and large, with the six holdings as the visual beneath it.
+    The brands are the asset a holding company has to show, so they get the
+    fold rather than an illustration.
+  -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero__statement">
+        <h1 class="display display--hero" data-rise="1">{COPY.HOME.headline}</h1>
+        <p class="lead hero__lead" data-rise="2">{COPY.HOME.lead}</p>
+        <div class="hero__actions" data-rise="3">
+          <a class="btn btn--primary" href="/portfolio/">{COPY.HOME.ctaPrimary}</a>
+          <a class="btn" href="/about/">{COPY.HOME.ctaSecondary}</a>
+        </div>
+      </div>
+
+      <div class="hero__tiles" data-rise="4">
+        <BrandTiles />
+      </div>
+    </div>
+  </section>
+
+  <!-- Figures -->
+  <section class="figures-band">
+    <div class="wrap">
+      <p class="label figures-band__label">{COPY.HOME.figuresLabel}</p>
+      <dl class="figures">
+        {
+          figures.map((figure) => (
+            <div class="figures__cell">
+              <dd class="figures__value">{figure.value}</dd>
+              <dt class="figures__key">{figure.key}</dt>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- Portfolio -->
+  <Section
+    eyebrow={COPY.HOME.portfolioEyebrow}
+    title={COPY.HOME.portfolioTitle}
+    id="portfolio"
+  >
+    <p class="lead" slot="head">{COPY.HOME.portfolioLead}</p>
+
+    <div class="division">
+      <div class="division__head">
+        <h3 class="division__title">{COPY.HOME.commercialLabel}</h3>
+        <p class="division__note">{COPY.HOME.commercialNote}</p>
+      </div>
+      <div class="cards cards--two">
+        {
+          SAAS_PRODUCTS.map((product) => (
+            <BrandCard product={product} summary={summaryFor(product.slug)} featured />
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="division">
+      <div class="division__head">
+        <h3 class="division__title">{COPY.HOME.openSourceLabel}</h3>
+        <p class="division__note">{COPY.HOME.openSourceNote}</p>
+      </div>
+      <div class="cards cards--four">
+        {
+          OSS_PRODUCTS.map((product) => (
+            <BrandCard product={product} summary={summaryFor(product.slug)} />
+          ))
+        }
+      </div>
+    </div>
+  </Section>
+
+  <!-- Structure -->
+  <Section tone="raised" eyebrow={COPY.HOME.entityEyebrow} title={COPY.HOME.entityTitle}>
+    <div class="two-col">
+      <div class="prose">
+        {COPY.HOME.entityBody.map((para) => <p>{para}</p>)}
+      </div>
+      <dl class="defs">
+        <div class="defs__row">
+          <dt class="defs__key">Founder</dt>
+          <dd class="defs__val">
+            <a class="link" href={COMPANY.founder.url} rel="noopener" target="_blank">
+              {COMPANY.founder.name} <IconArrow direction="up-right" size={14} />
+            </a>
+          </dd>
+        </div>
+        <div class="defs__row">
+          <dt class="defs__key">Trade names</dt>
+          <dd class="defs__val">{COMPANY.tradeNames.join(', ')}</dd>
+        </div>
+        <div class="defs__row">
+          <dt class="defs__key">Based in</dt>
+          <dd class="defs__val">{JURISDICTION}</dd>
+        </div>
+        <div class="defs__row">
+          <dt class="defs__key">Operating since</dt>
+          <dd class="defs__val">{COMPANY.foundingYear}</dd>
+        </div>
+      </dl>
+    </div>
+  </Section>
+
+  <!-- News -->
+  {
+    latest.length > 0 && (
+      <Section eyebrow={COPY.HOME.newsEyebrow} title={COPY.HOME.newsTitle}>
+        <div class="news-grid">
+          {latest.map((post) => (
+            <a class="news-card" href={newsHref(post)}>
+              <p class="news-card__meta">
+                <time datetime={isoDate(post.data.datePublished)}>
+                  {formatDate(post.data.datePublished)}
+                </time>
+                <span aria-hidden="true">·</span>
+                <span>{post.data.category}</span>
+              </p>
+              <h3 class="news-card__title">{post.data.title}</h3>
+              <p class="news-card__summary">{post.data.summary}</p>
+            </a>
+          ))}
+        </div>
+        <p class="more">
+          <a href="/news/" class="link">
+            {COPY.HOME.newsLink} <IconArrow direction="right" size={14} />
+          </a>
+        </p>
+      </Section>
+    )
+  }
+
+  <!-- Close -->
+  <Section tone="raised" eyebrow="Contact" title={COPY.HOME.ctaTitle}>
+    <div class="cta">
+      <p class="lead">{COPY.HOME.ctaBody}</p>
+      <a href="/contact/" class="btn btn--primary">{COPY.HOME.ctaButton}</a>
+    </div>
+  </Section>
+</Base>
+
+<style>
+  .hero {
+    padding-block: clamp(3rem, 8vh, 5.5rem) clamp(2.5rem, 5vw, 4rem);
+    text-align: center;
+  }
+
+
+  /* The cap applies to the headline only. Putting it on the whole column is
+     what previously squeezed the lead and stacked the two buttons. */
+  .hero__statement .display--hero {
+    max-width: min(100%, 28ch);
+    margin-inline: auto;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .hero__lead {
+    margin-top: 1.5rem;
+    font-size: clamp(1.0625rem, 1.35vw, 1.25rem);
+    max-width: min(100%, 56ch);
+    margin-inline: auto;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .hero__tiles {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    text-align: left;
+  }
+
+
+
+
+
+
+  /* The figures get their own band with a surface behind them, so the strip
+     reads as a plate of data rather than as more page. */
+  .figures-band {
+    background: var(--ink-800);
+    border-block: 1px solid var(--rule-faint);
+    padding-block: clamp(1.75rem, 4vw, 2.5rem);
+  }
+
+  .figures-band__label {
+    display: block;
+    margin-bottom: 1.25rem;
+  }
+
+  .division + .division {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  .division__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 1.25rem;
+    margin-bottom: 1.35rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .division__title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.008em;
+    color: var(--text-primary);
+  }
+
+  .division__note {
+    font-size: 0.9375rem;
+    color: var(--text-tertiary);
+    max-width: 62ch;
+  }
+
+  .cards {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .cards--two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cards--four {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  @media (max-width: 1080px) {
+    .cards--four {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .cards--two,
+    .cards--four {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: 1rem;
+  }
+
+  .news-card {
+    display: grid;
+    align-content: start;
+    gap: 0.6rem;
+    padding: 1.4rem;
+    border: 1px solid var(--rule);
+    background: var(--surface-raised);
+    transition:
+      border-color var(--t-base) var(--ease),
+      background-color var(--t-base) var(--ease);
+  }
+
+  .news-card:hover,
+  .news-card:focus-visible {
+    border-color: var(--rule-strong);
+    background: var(--ink-800);
+  }
+
+  .news-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--label-size);
+    letter-spacing: var(--label-tracking);
+    text-transform: uppercase;
+    color: var(--text-quaternary);
+  }
+
+  .news-card__title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+  }
+
+  .news-card__summary {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    text-wrap: pretty;
+  }
+
+  .more {
+    margin-top: 1.6rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .cta .lead {
+    max-width: 46ch;
+    margin: 0;
+  }
+</style>

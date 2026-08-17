@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#35C4EF"/>
+      <stop offset="0.5" stop-color="#7C8CF5"/>
+      <stop offset="1" stop-color="#A25CF7"/>
+    </linearGradient>
+    <linearGradient id="markgrad" x1="0" y1="142" x2="0" y2="257" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#35C4EF"/>
+      <stop offset="0.5" stop-color="#7C8CF5"/>
+      <stop offset="1" stop-color="#A25CF7"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="#0B1020"/>
+
+  <!-- the mark, scaled from its 400-unit box into the top-left corner -->
+  <g transform="translate(90 74) scale(0.18)">
+    <g stroke="url(#markgrad)" stroke-width="23" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <path d="M109.5 153h48"/><path d="M109.5 200h48"/><path d="M109.5 246h48"/>
+      <path d="M298 153H234v47h64v46h-64"/>
+    </g>
+  </g>
+
+  <text x="180" y="118" font-family="IBM Plex Mono, monospace" font-size="20"
+        letter-spacing="2.8" fill="#6E7794">CONTACT</text>
+
+  <text font-family="Newsreader, Georgia, serif" font-size="78" fill="#E8EAF2"
+        letter-spacing="-1.6"><tspan x="90" y="330">Contact</tspan></text>
+
+  <rect x="90" y="392" width="132" height="5" rx="2.5" fill="url(#brand)"/>
+
+  <text x="90" y="556" font-family="IBM Plex Mono, monospace" font-size="19"
+        letter-spacing="2.4" fill="#4A5270">ELUCIDSOFT LLC · STAFFORD, VIRGINIA</text>
+  <text x="1110" y="556" text-anchor="end" font-family="IBM Plex Mono, monospace"
+        font-size="19" letter-spacing="2.4" fill="#4A5270">ELUCIDSOFT.COM</text>
+</svg>

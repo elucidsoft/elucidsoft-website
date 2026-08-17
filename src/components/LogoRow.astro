@@ -1,0 +1,122 @@
+---
+/**
+ * The portfolio logo row.
+ *
+ * A corporate homepage proves what it holds above the fold, with marks rather
+ * than prose. Tiny runs its 21 brands as a logo carousel in the hero; Bending
+ * Spoons puts its acquired brands in a logo grid. It is the fastest possible
+ * answer to "what is this company", and it is the single element this design
+ * was missing while it read as a personal site.
+ *
+ * Static, not a carousel. Six marks fit on one row without motion, and an
+ * auto-scrolling strip would be movement for its own sake.
+ */
+import { PRODUCTS } from '../data/portfolio';
+
+interface Props {
+  label?: string;
+}
+const { label } = Astro.props;
+---
+
+<div class="logo-row">
+  {label && <p class="logo-row__label label">{label}</p>}
+  <ul class="logo-row__list">
+    {
+      PRODUCTS.map((product) => (
+        <li>
+          <a
+            class="logo-row__item"
+            href={`/portfolio/${product.slug}/`}
+            style={`--tile: ${product.brand.ground};`}
+          >
+            <span class="logo-row__tile">
+              <img
+                src={product.brand.logo}
+                alt=""
+                width="40"
+                height="40"
+                loading="lazy"
+                decoding="async"
+              />
+            </span>
+            <span class="logo-row__name">{product.name}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .logo-row__label {
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .logo-row__list {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    border: 1px solid var(--rule);
+  }
+
+  .logo-row__list li {
+    border-right: 1px solid var(--rule-faint);
+    min-width: 0;
+  }
+
+  .logo-row__list li:last-child {
+    border-right: none;
+  }
+
+  .logo-row__item {
+    display: grid;
+    justify-items: center;
+    gap: 0.6rem;
+    padding: 1.1rem 0.5rem;
+    transition: background-color var(--t-fast) var(--ease);
+  }
+
+  .logo-row__item:hover,
+  .logo-row__item:focus-visible {
+    background: var(--surface-raised);
+  }
+
+  .logo-row__tile {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--tile);
+    border: 1px solid var(--rule-faint);
+  }
+
+  .logo-row__tile img {
+    width: 1.5rem;
+    height: 1.5rem;
+    object-fit: contain;
+  }
+
+  .logo-row__name {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  @media (max-width: 860px) {
+    .logo-row__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .logo-row__list li:nth-child(3n) {
+      border-right: none;
+    }
+    .logo-row__list li:nth-child(-n + 3) {
+      border-bottom: 1px solid var(--rule-faint);
+    }
+  }
+</style>

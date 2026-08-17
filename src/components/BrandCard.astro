@@ -1,0 +1,184 @@
+---
+/**
+ * A portfolio tile.
+ *
+ * This replaces the ruled text register that made the previous design read as
+ * a blog index. Every corporate umbrella site that works presents its holdings
+ * as real brand cards — the company's own logo on its own ground, a
+ * description, and a way through. The logo doing the identifying rather than a
+ * styled wordmark is the whole difference between "a company's portfolio" and
+ * "a list of links".
+ *
+ * The mark sits in a tile painted with that product's own background colour,
+ * because these marks were drawn for their own sites: ori-term's phosphor
+ * green is drawn for near-black, Ori's chevrons for a slate ground. Dropping
+ * them onto a shared surface would misrender half of them.
+ *
+ * The accent is used for one hairline along the top edge on hover. It is the
+ * one place a product's colour is allowed to touch the parent's page.
+ */
+import type { Product } from '../data/portfolio';
+import { STAGE_LABEL } from '../data/portfolio';
+import IconArrow from './IconArrow.astro';
+
+interface Props {
+  product: Product;
+  summary: string;
+  /** Commercial cards get more room and carry their category line. */
+  featured?: boolean;
+}
+
+const { product, summary, featured = false } = Astro.props;
+---
+
+<a
+  class="brand-card"
+  class:list={[{ 'is-featured': featured }]}
+  href={`/portfolio/${product.slug}/`}
+  style={`--accent: ${product.brand.accent}; --tile: ${product.brand.ground};`}
+>
+  <div class="brand-card__top">
+    <span class="brand-card__tile">
+      <img
+        src={product.brand.logo}
+        alt=""
+        width="48"
+        height="48"
+        loading="lazy"
+        decoding="async"
+      />
+    </span>
+    <span class="brand-card__stage">{STAGE_LABEL[product.stage]}</span>
+  </div>
+
+  <h3 class="brand-card__name">{product.name}</h3>
+  <p class="brand-card__summary">{summary}</p>
+
+  <div class="brand-card__foot">
+    <span class="brand-card__host">{product.displayUrl}</span>
+    <span class="brand-card__go"><IconArrow direction="right" size={16} /></span>
+  </div>
+</a>
+
+<style>
+  .brand-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    padding: 1.5rem;
+    background: var(--surface-raised);
+    border: 1px solid var(--rule);
+    position: relative;
+    isolation: isolate;
+    transition:
+      border-color var(--t-base) var(--ease),
+      background-color var(--t-base) var(--ease),
+      transform var(--t-base) var(--ease);
+  }
+
+  /* The product's own colour, one hairline, on hover only. */
+  .brand-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px -1px auto -1px;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--t-base) var(--ease-rule);
+  }
+
+  .brand-card:hover,
+  .brand-card:focus-visible {
+    border-color: var(--rule-strong);
+    background: var(--ink-800);
+    transform: translateY(-2px);
+  }
+
+  .brand-card:hover::before,
+  .brand-card:focus-visible::before {
+    transform: scaleX(1);
+  }
+
+  .brand-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  /* The mark keeps the ground it was drawn for. */
+  .brand-card__tile {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    background: var(--tile);
+    border: 1px solid var(--rule-faint);
+    flex: none;
+  }
+
+  .brand-card__tile img {
+    width: 2rem;
+    height: 2rem;
+    object-fit: contain;
+  }
+
+  .brand-card__stage {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-quaternary);
+    white-space: nowrap;
+  }
+
+  .brand-card__name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--text-primary);
+  }
+
+  .is-featured .brand-card__name {
+    font-size: 1.5rem;
+  }
+
+  .brand-card__summary {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    text-wrap: pretty;
+    flex: 1;
+  }
+
+  .brand-card__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.25rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--rule-faint);
+  }
+
+  .brand-card__host {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+  }
+
+  .brand-card__go {
+    color: var(--text-quaternary);
+    transition:
+      transform var(--t-base) var(--ease),
+      color var(--t-base) var(--ease);
+  }
+
+  .brand-card:hover .brand-card__go,
+  .brand-card:focus-visible .brand-card__go {
+    color: var(--text-primary);
+    transform: translateX(3px);
+  }
+</style>

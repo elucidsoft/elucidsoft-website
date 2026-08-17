@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import LegalBody from '../../components/LegalBody.astro';
+import { COPY } from '../../data/copy';
+import { graph, organizationSchema } from '../../lib/schema';
+import { breadcrumbSchema } from '../../lib/seo';
+
+const jsonLd = graph(
+  organizationSchema(),
+  breadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: COPY.LEGAL.termsTitle, href: '/terms' },
+  ]),
+);
+---
+
+<Base
+  title="Terms of Use & Legal Notice"
+  description={COPY.LEGAL.termsMetaDescription}
+  jsonLd={jsonLd}
+>
+  <Section eyebrow="Legal" title={COPY.LEGAL.termsTitle} as="h1">
+    <p class="lead" slot="head">{COPY.LEGAL.termsIntro}</p>
+    <LegalBody sections={COPY.LEGAL.termsBody} showAddress />
+  </Section>
+</Base>

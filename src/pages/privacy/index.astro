@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import LegalBody from '../../components/LegalBody.astro';
+import { COPY } from '../../data/copy';
+import { graph, organizationSchema } from '../../lib/schema';
+import { breadcrumbSchema } from '../../lib/seo';
+
+const jsonLd = graph(
+  organizationSchema(),
+  breadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: COPY.LEGAL.privacyTitle, href: '/privacy' },
+  ]),
+);
+---
+
+<Base
+  title="Privacy Policy & Data Practices"
+  description={COPY.LEGAL.privacyMetaDescription}
+  jsonLd={jsonLd}
+>
+  <Section eyebrow="Legal" title={COPY.LEGAL.privacyTitle} as="h1">
+    <p class="lead" slot="head">{COPY.LEGAL.privacyIntro}</p>
+    <LegalBody sections={COPY.LEGAL.privacyBody} showAddress />
+  </Section>
+</Base>

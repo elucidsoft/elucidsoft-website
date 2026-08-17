@@ -1,0 +1,135 @@
+---
+/**
+ * The news listing, as a card grid.
+ *
+ * Cards rather than the ruled rows this used to render: a corporate newsroom
+ * shows articles as tiles, and the ruled-row treatment was part of what made
+ * the whole site read as a personal blog. Shared by the news index, the paged
+ * slices and the category pages so all three stay identical.
+ */
+import { formatDate, isoDate, newsHref, readingMinutes, type NewsEntry } from '../lib/news';
+import IconArrow from './IconArrow.astro';
+
+interface Props {
+  entries: NewsEntry[];
+}
+const { entries }: Props = Astro.props;
+---
+
+<div class="posts">
+  {
+    entries.map((entry) => (
+      <article class="post">
+        <a class="post__link" href={newsHref(entry)}>
+          <p class="post__meta">
+            <time datetime={isoDate(entry.data.datePublished)}>
+              {formatDate(entry.data.datePublished)}
+            </time>
+            <span aria-hidden="true">·</span>
+            <span>{entry.data.category}</span>
+            <span aria-hidden="true">·</span>
+            <span>{readingMinutes(entry.body ?? '')} min</span>
+          </p>
+          <h2 class="post__title">{entry.data.title}</h2>
+          <p class="post__summary">{entry.data.summary}</p>
+          <span class="post__more" aria-hidden="true">
+            Read <IconArrow direction="right" size={14} class="post__arrow" />
+          </span>
+        </a>
+      </article>
+    ))
+  }
+</div>
+
+<style>
+  .posts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: 1rem;
+  }
+
+  .post {
+    border: 1px solid var(--rule);
+    background: var(--surface-raised);
+    position: relative;
+    transition:
+      border-color var(--t-base) var(--ease),
+      background-color var(--t-base) var(--ease);
+  }
+
+  .post:hover,
+  .post:focus-within {
+    border-color: var(--rule-strong);
+    background: var(--ink-800);
+  }
+
+  /* The brand ramp, one hairline, on the top edge. Same device the portfolio
+     cards use. */
+  .post::before {
+    content: '';
+    position: absolute;
+    inset: -1px -1px auto -1px;
+    height: 2px;
+    background: var(--brand-gradient-h);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--t-base) var(--ease-rule);
+  }
+
+  .post:hover::before,
+  .post:focus-within::before {
+    transform: scaleX(1);
+  }
+
+  .post__link {
+    display: grid;
+    align-content: start;
+    gap: 0.65rem;
+    padding: 1.5rem;
+    height: 100%;
+  }
+
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--label-size);
+    letter-spacing: var(--label-tracking);
+    text-transform: uppercase;
+    color: var(--text-quaternary);
+  }
+
+  .post__title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    line-height: 1.25;
+    color: var(--text-primary);
+  }
+
+  .post__summary {
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+
+  .post__more {
+    font-family: var(--font-mono);
+    font-size: var(--label-size);
+    letter-spacing: var(--label-tracking);
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-top: 0.35rem;
+  }
+
+  .post__arrow {
+    display: inline-block;
+    transition: transform var(--t-base) var(--ease);
+  }
+
+  .post:hover .post__arrow {
+    transform: translateX(3px);
+  }
+</style>

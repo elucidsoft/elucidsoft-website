@@ -1,0 +1,181 @@
+---
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import { COPY } from '../../data/copy';
+import { OSS_PRODUCTS } from '../../data/portfolio';
+import { COMPANY } from '../../data/company';
+import { graph, organizationSchema, productSchema } from '../../lib/schema';
+import { breadcrumbSchema } from '../../lib/seo';
+import IconArrow from '../../components/IconArrow.astro';
+
+const jsonLd = graph(
+  organizationSchema(),
+  ...OSS_PRODUCTS.map((product) =>
+    productSchema(product, COPY.PRODUCTS[product.slug as keyof typeof COPY.PRODUCTS].summary),
+  ),
+  breadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: COPY.OPEN_SOURCE.title, href: '/open-source' },
+  ]),
+);
+---
+
+<Base
+  title={COPY.OPEN_SOURCE.metaTitle}
+  description={COPY.OPEN_SOURCE.metaDescription}
+  jsonLd={jsonLd}
+>
+  <Section eyebrow={COPY.OPEN_SOURCE.eyebrow} title={COPY.OPEN_SOURCE.title} as="h1">
+    <p class="lead" slot="head">{COPY.OPEN_SOURCE.lead}</p>
+
+    <div class="table-scroll">
+      <table class="data">
+        <caption class="visually-hidden">
+          Open source projects published by {COMPANY.legalName}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Project</th>
+            <th scope="col">Kind</th>
+            <th scope="col">Licence</th>
+            <th scope="col">Version</th>
+            <th scope="col">Repository</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            OSS_PRODUCTS.map((product) => (
+              <tr>
+                <th scope="row">
+                  <a class="link" href={`/portfolio/${product.slug}/`}>
+                    {product.name}
+                  </a>
+                </th>
+                <td>{product.category}</td>
+                <td class="mono">{product.license}</td>
+                <td class="mono">{product.version}</td>
+                <td>
+                  <a class="link" href={product.github} rel="noopener">
+                    {product.github?.replace('https://github.com/', '')}
+                  </a>
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </Section>
+
+  <Section tone="raised" eyebrow="Projects" title="What each one is">
+    <div class="projects">
+      {
+        OSS_PRODUCTS.map((product) => {
+          const copy = COPY.PRODUCTS[product.slug as keyof typeof COPY.PRODUCTS];
+          return (
+            <article class="project">
+              <div class="project__head">
+                <h3 class="project__name display">{product.name}</h3>
+                <span class="tag">Alpha</span>
+              </div>
+              <p class="project__summary">{copy.summary}</p>
+              <div class="project__links">
+                <a class="link" href={`/portfolio/${product.slug}/`}>
+                  Details
+                </a>
+                <a class="link" href={product.url} rel="noopener">
+                  {product.displayUrl}
+                </a>
+                <a class="link" href={product.github} rel="noopener">
+                  Source
+                </a>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+  </Section>
+
+  <Section eyebrow="Policy" title={COPY.OPEN_SOURCE.policyTitle}>
+    <div class="two-col">
+      <div class="prose">
+        {COPY.OPEN_SOURCE.policyBody.map((para) => <p>{para}</p>)}
+      </div>
+      <div class="sponsor">
+        <h3 class="label sponsor__head">{COPY.OPEN_SOURCE.sponsorTitle}</h3>
+        <p class="sponsor__body">{COPY.OPEN_SOURCE.sponsorBody}</p>
+        <a class="btn" href={COMPANY.sponsorUrl} rel="noopener">
+          Sponsor
+          <IconArrow direction="up-right" size={14} />
+        </a>
+      </div>
+    </div>
+  </Section>
+</Base>
+
+<style>
+  .projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: clamp(1.75rem, 4vw, 3rem);
+  }
+
+  .project {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.25rem;
+    display: grid;
+    align-content: start;
+    gap: 0.9rem;
+  }
+
+  .project__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .project__name {
+    font-size: 1.3rem;
+  }
+
+  .project__summary {
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    text-wrap: pretty;
+  }
+
+  .project__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .sponsor {
+    border-left: 1px solid var(--rule);
+    padding-left: clamp(1.25rem, 2.5vw, 2rem);
+    display: grid;
+    align-content: start;
+    gap: 1rem;
+    justify-items: start;
+  }
+
+  .sponsor__body {
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+  }
+
+  @media (max-width: 860px) {
+    .sponsor {
+      border-left: none;
+      padding-left: 0;
+      border-top: 1px solid var(--rule);
+      padding-top: 1.5rem;
+    }
+  }
+</style>

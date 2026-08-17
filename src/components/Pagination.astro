@@ -1,0 +1,87 @@
+---
+/**
+ * Prev / position / Next.
+ *
+ * Two rules encoded here:
+ *   - Page 1 is always the base path, never `/page/1/`. A `/page/1/` URL is a
+ *     second address for the index and splits its signals.
+ *   - Every link carries the `#posts` fragment so a reader paging through
+ *     lands on the list rather than back at the masthead.
+ */
+import IconArrow from './IconArrow.astro';
+
+interface Props {
+  page: number;
+  totalPages: number;
+  /** Base path with a trailing slash, e.g. `/news/`. */
+  basePath: string;
+}
+
+const { page, totalPages, basePath } = Astro.props;
+
+const href = (n: number) => (n === 1 ? `${basePath}#posts` : `${basePath}page/${n}/#posts`);
+---
+
+{
+  totalPages > 1 && (
+    <nav class="pager" aria-label="Pagination">
+      {page > 1 ? (
+        <a class="pager__link" href={href(page - 1)} rel="prev">
+          <IconArrow direction="left" size={14} /> Previous
+        </a>
+      ) : (
+        <span class="pager__link is-disabled" aria-hidden="true">
+          <IconArrow direction="left" size={14} /> Previous
+        </span>
+      )}
+
+      <span class="pager__pos mono">
+        Page {page} of {totalPages}
+      </span>
+
+      {page < totalPages ? (
+        <a class="pager__link" href={href(page + 1)} rel="next">
+          Next <IconArrow direction="right" size={14} />
+        </a>
+      ) : (
+        <span class="pager__link is-disabled" aria-hidden="true">
+          Next <IconArrow direction="right" size={14} />
+        </span>
+      )}
+    </nav>
+  )
+}
+
+<style>
+  .pager {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    font-family: var(--font-mono);
+    font-size: var(--label-size);
+    letter-spacing: var(--label-tracking);
+    text-transform: uppercase;
+  }
+
+  .pager__link {
+    color: var(--text-secondary);
+    transition: color var(--t-fast) var(--ease);
+  }
+
+  .pager__link:hover,
+  .pager__link:focus-visible {
+    color: var(--text-primary);
+  }
+
+  .pager__link.is-disabled {
+    color: var(--text-quaternary);
+  }
+
+  .pager__pos {
+    color: var(--text-quaternary);
+  }
+</style>

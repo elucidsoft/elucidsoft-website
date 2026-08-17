@@ -1,0 +1,37 @@
+---
+import { getEntries, render } from 'astro:content';
+import Article from '../../layouts/Article.astro';
+import { getPublished, readingMinutes, type NewsEntry } from '../../lib/news';
+
+export async function getStaticPaths() {
+  // Drafts get no route at all, rather than a route marked noindex. A page that
+  // does not exist cannot be leaked by a stray link or a cached sitemap.
+  const entries = await getPublished();
+  return entries.map((entry) => ({
+    params: { slug: entry.data.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: NewsEntry;
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+
+/*
+ * Related links are filtered to published entries. A reference to a draft
+ * resolves fine at build time and renders a link to a page that was never
+ * generated — a 404 that only appears in production.
+ */
+const related = (await getEntries(entry.data.relatedArticles ?? [])).filter(
+  (item): item is NewsEntry => Boolean(item) && item.data.status === 'published',
+);
+
+const minutes = readingMinutes(entry.body ?? '');
+---
+
+<Article entry={entry} headings={headings} minutes={minutes} related={related}>
+  <Content />
+</Article>

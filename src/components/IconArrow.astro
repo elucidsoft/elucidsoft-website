@@ -1,0 +1,61 @@
+---
+/**
+ * IconArrow.astro — Crisp vector arrow icon for links and navigation.
+ * Replaces unicode/emoji arrows with clean SVG paths.
+ */
+interface Props {
+  direction?: 'right' | 'left' | 'up-right';
+  size?: number | string;
+  class?: string;
+}
+
+const { direction = 'right', size = 16, class: className = '' } = Astro.props;
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class:list={['icon-arrow', `icon-arrow--${direction}`, className]}
+  aria-hidden="true"
+>
+  {
+    direction === 'right' && (
+      <>
+        <line x1="5" y1="12" x2="19" y2="12" />
+        <polyline points="12 5 19 12 12 19" />
+      </>
+    )
+  }
+  {
+    direction === 'left' && (
+      <>
+        <line x1="19" y1="12" x2="5" y2="12" />
+        <polyline points="12 19 5 12 12 5" />
+      </>
+    )
+  }
+  {
+    direction === 'up-right' && (
+      <>
+        <line x1="7" y1="17" x2="17" y2="7" />
+        <polyline points="7 7 17 7 17 17" />
+      </>
+    )
+  }
+</svg>
+
+<style>
+  .icon-arrow {
+    display: inline-block;
+    vertical-align: -0.15em;
+    flex-shrink: 0;
+    transition: transform var(--t-fast) var(--ease);
+  }
+</style>
