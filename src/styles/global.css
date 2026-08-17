@@ -378,7 +378,10 @@ main {
   position: relative;
   transition:
     border-color var(--t-base) var(--ease),
-    background-color var(--t-base) var(--ease);
+    background-color var(--t-base) var(--ease),
+    color var(--t-base) var(--ease),
+    transform var(--t-base) var(--ease),
+    opacity var(--t-base) var(--ease);
 }
 
 .btn::before {
@@ -389,6 +392,7 @@ main {
   opacity: 0;
   transition: opacity var(--t-base) var(--ease);
   z-index: -1;
+  border-radius: inherit;
 }
 
 .btn:hover,
@@ -424,8 +428,14 @@ main {
 
 .btn--primary:hover,
 .btn--primary:focus-visible {
-  border-color: var(--text-primary);
-  background: var(--text-secondary);
+  background: color-mix(in srgb, var(--text-primary) 88%, var(--ink-850));
+  border-color: color-mix(in srgb, var(--text-primary) 88%, var(--ink-850));
+  color: var(--ink-850);
+  transform: translateY(-1px);
+}
+
+.btn--primary:active {
+  transform: translateY(0);
 }
 
 .btn--primary::before {
