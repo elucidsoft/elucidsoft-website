@@ -7,7 +7,7 @@ export const GET: APIRoute = async () =>
   new Response(
     wrapAsHtml(
       `llms-full.txt — ${COMPANY.legalName}`,
-      `Complete machine-readable record of ${COMPANY.legalName}: full descriptions of all six products, the company structure, and an explicit list of what the company does not claim.`,
+      `Complete machine-readable record of ${COMPANY.legalName}: full descriptions of all seven products, the company structure, and an explicit list of what the company does not claim.`,
       `${SITE_URL}/llms-full.html`,
       await buildLlmsFullTxt(),
     ),

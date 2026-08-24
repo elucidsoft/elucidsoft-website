@@ -47,7 +47,7 @@ export const HOME = {
   entityTitle: 'Independent, founder-led software engineering',
   entityBody: [
     'Elucidsoft was founded in 2010 by Eric Malamisura as a privately held software company in Virginia. Operating with long-term autonomy, we focus on sustainable software architecture, operational independence, and deep technical craft.',
-    'We develop two software lines: commercial SaaS products (Upstat and cloudlayer.io), and independent open-source technologies (WarpKit, Ori, ori-term, and OriJS). Revenue from our commercial products directly funds our ongoing work on open-source tools.',
+    'We develop two software lines: commercial SaaS products (Upstat, cloudlayer.io, and ActLume), and independent open-source technologies (WarpKit, Ori, ori-term, and OriJS). Revenue from our commercial products directly funds our ongoing work on open-source tools.',
   ],
 
   newsEyebrow: 'Corporate communications',
@@ -67,7 +67,7 @@ export const HOME = {
 export const PORTFOLIO = {
   metaTitle: 'Software Products & Systems | Elucidsoft',
   metaDescription:
-    'Explore our portfolio of six software products across commercial SaaS and open source, including Upstat, cloudlayer.io, WarpKit, Ori, ori-term, and OriJS.',
+    'Explore our portfolio of seven software products across commercial SaaS and open source, including Upstat, cloudlayer.io, and ActLume.',
   eyebrow: 'Products',
   title: 'Products',
   lead: 'A directory of our commercial SaaS products and open-source developer tools, detailed by division, development stage, and license.',
@@ -112,6 +112,22 @@ export const PRODUCTS = {
     ],
     whyItExists:
       'Turning dynamic application data into reliable documents should be handled by dedicated infrastructure rather than bespoke rendering scripts.',
+  },
+
+  actlume: {
+    blurb: 'CRA Article 14 reporting workspace for manufacturers',
+    metaTitle: 'ActLume: CRA Article 14 Reporting Workspace',
+    metaDescription:
+      'ActLume is an upcoming reporting workspace helping manufacturers prepare EU Cyber Resilience Act Article 14 incident notifications ahead of the 2026 deadline.',
+    summary:
+      'ActLume is an upcoming multi-tenant web platform for commercial manufacturers subject to the EU Cyber Resilience Act. It is a reporting workspace for CRA Article 14, keeping readiness details, incident facts, human reportability decisions, and staged deadline tracking together in one case record per occurrence.',
+    body: [
+      'CRA Article 14 requires manufacturers to report actively exploited vulnerabilities and severe incidents affecting product security, with staged outer time limits after awareness: a 24-hour early warning, a 72-hour notification, and a final report. These obligations enter into application on 11 September 2026, and tracking them across spreadsheets and email threads leaves accountable staff without a single record of what was decided and when.',
+      'ActLume keeps manufacturer, product, and reporter readiness details alongside incident facts, human reportability decisions, declared awareness times, deadline tracking, and staged report preparation and review in one case record per occurrence. A human filer signs into the ENISA Single Reporting Platform with EU Login to review and submit each report; ActLume never signs in, submits, or automates the portal itself, offering copy-assist to copy one selected value per explicit user gesture and recording the confirmed result as evidence. Every legal determination stays with accountable people.',
+      'ActLume is currently in pre-release development, with its marketing site live at actlume.com ahead of Article 14 obligations entering into application on 11 September 2026, for manufacturers organizing their CRA reporting readiness before the deadline.',
+    ],
+    whyItExists:
+      'Staged CRA Article 14 deadlines and human reportability decisions need one accountable case record rather than scattered spreadsheets and email threads.',
   },
 
   warpkit: {
@@ -215,7 +231,7 @@ export const ABOUT = {
   structureTitle: 'History and governance',
   structureBody: [
     'Elucidsoft was established in 2010 by engineer and entrepreneur Eric Malamisura in Virginia, United States. From inception, the company has operated as a privately held software enterprise dedicated to building dependable digital infrastructure and developer technologies without external investor constraints.',
-    'The corporate structure is straightforward: Elucidsoft serves as the parent software company and legal entity. Upstat (incident response and operational intelligence) and cloudlayer.io (document generation and capture infrastructure) operate as commercial business units under registered trade names (DBAs). cloudlayer.io is live and generating revenue, while Upstat is currently in pre-release development.',
+    'The corporate structure is straightforward: Elucidsoft serves as the parent software company and legal entity. Upstat (incident response and operational intelligence), cloudlayer.io (document generation and capture infrastructure), and ActLume (CRA Article 14 reporting workspace) operate as commercial business units under registered trade names (DBAs). cloudlayer.io is live and generating revenue, while Upstat and ActLume are currently in pre-release development.',
     'Alongside its commercial products, Elucidsoft builds and publishes open-source software, including the WarpKit application framework, the Ori systems programming language, the ori-term GPU terminal emulator, and the OriJS backend framework. Revenue from our commercial products directly supports our open-source development.',
   ],
 
@@ -264,7 +280,7 @@ export const CONTACT = {
 
   asideTitle: 'Commercial product support',
   asideBody:
-    'For customer support, billing inquiries, or technical assistance with Upstat or cloudlayer.io, please visit the official support channels on the product website.',
+    'For customer support, billing inquiries, or technical assistance with Upstat, cloudlayer.io, or ActLume, please visit the official support channels on the product website.',
   channelsTitle: 'Corporate channels & repositories',
 } as const;
 
@@ -300,7 +316,7 @@ export const FACTS = {
   notClaimed: [
     'Elucidsoft is privately held and founder-led; outside investment is currently being raised specifically for cloudlayer.io.',
     'The company is founder-led by Eric Malamisura; no additional employees or contractors are represented on this site.',
-    'Upstat is in pre-release development; Ori, ori-term, and OriJS are experimental alpha projects and are not marketed as production-ready.',
+    'Upstat and ActLume are in pre-release development; Ori, ori-term, and OriJS are experimental alpha projects and are not marketed as production-ready.',
     'No unsolicited customer logos, paid endorsements, or sponsored awards are published.',
   ],
 } as const;
@@ -343,7 +359,7 @@ export const LEGAL = {
       heading: '1. Scope and operational boundaries',
       paragraphs: [
         'This Privacy Policy applies strictly to the elucidsoft.com website and direct corporate communications sent to Elucidsoft LLC. It explains our data handling practices for visitors reviewing corporate documentation, announcements, and open-source project directories.',
-        'Elucidsoft operates distinct commercial SaaS platforms (including Upstat and cloudlayer.io) that maintain separate privacy policies, terms of service, and customer data processing addenda (DPAs). Customer account credentials, billing records, monitoring payloads, and document rendering jobs processed on those commercial platforms are governed exclusively by their respective policies and service agreements.',
+        'Elucidsoft operates distinct commercial SaaS platforms (including Upstat, cloudlayer.io, and ActLume) that maintain separate privacy policies, terms of service, and customer data processing addenda (DPAs). Customer account credentials, billing records, monitoring payloads, and document rendering jobs processed on those commercial platforms are governed exclusively by their respective policies and service agreements.',
       ],
     },
     {
@@ -395,7 +411,7 @@ export const LEGAL = {
     {
       heading: '8. Commercial SaaS privacy policies',
       paragraphs: [
-        'Customer data processed within Upstat or cloudlayer.io is governed by each platform\'s dedicated privacy documentation and customer data protection agreements:',
+        'Customer data processed within Upstat, cloudlayer.io, or ActLume is governed by each platform\'s dedicated privacy documentation and customer data protection agreements:',
       ],
       productLinks: true,
     },
@@ -424,7 +440,7 @@ export const LEGAL = {
     {
       heading: '2. Commercial SaaS services separation',
       paragraphs: [
-        'Elucidsoft operates commercial software platforms under registered trade names, including Upstat (upstat.io) and cloudlayer.io (cloudlayer.io). Each commercial service is governed by its own independent Terms of Service, Service Level Agreements (SLAs), and customer subscription agreements.',
+        'Elucidsoft operates commercial software platforms under registered trade names, including Upstat (upstat.io), cloudlayer.io (cloudlayer.io), and ActLume (actlume.com). Each commercial service is governed by its own independent Terms of Service, Service Level Agreements (SLAs), and customer subscription agreements.',
         'Accessing elucidsoft.com does not grant a commercial SaaS license, establish a service level agreement, or create a customer subscriber relationship with any commercial product line.',
       ],
       productLinks: true,

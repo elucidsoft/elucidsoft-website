@@ -23,10 +23,10 @@
   </g>
 
   <text x="180" y="118" font-family="IBM Plex Mono, monospace" font-size="20"
-        letter-spacing="2.8" fill="#6E7794">ELUCIDSOFT LLC</text>
+        letter-spacing="2.8" fill="#6E7794">PORTFOLIO</text>
 
-  <text font-family="Newsreader, Georgia, serif" font-size="62" fill="#E8EAF2"
-        letter-spacing="-1.6"><tspan x="90" y="294">Seven products, two divisions,</tspan><tspan x="90" y="366">one company</tspan></text>
+  <text font-family="Newsreader, Georgia, serif" font-size="78" fill="#E8EAF2"
+        letter-spacing="-1.6"><tspan x="90" y="330">ActLume</tspan></text>
 
   <rect x="90" y="392" width="132" height="5" rx="2.5" fill="url(#brand)"/>
 

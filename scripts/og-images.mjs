@@ -26,7 +26,7 @@ const HEIGHT = 630;
 
 /** Kept in step with src/data/portfolio.ts and the page routes. */
 const CARDS = [
-  { name: 'default', eyebrow: 'Elucidsoft LLC', title: 'Six products, two divisions, one company' },
+  { name: 'default', eyebrow: 'Elucidsoft LLC', title: 'Seven products, two divisions, one company' },
   { name: 'portfolio', eyebrow: 'Portfolio', title: 'The portfolio' },
   { name: 'open-source', eyebrow: 'Open source', title: 'Open source projects' },
   { name: 'about', eyebrow: 'About', title: 'About Elucidsoft' },
@@ -35,6 +35,7 @@ const CARDS = [
   { name: 'news', eyebrow: 'News', title: 'News' },
   { name: 'upstat', eyebrow: 'Portfolio', title: 'Upstat' },
   { name: 'cloudlayer', eyebrow: 'Portfolio', title: 'cloudlayer.io' },
+  { name: 'actlume', eyebrow: 'Portfolio', title: 'ActLume' },
   { name: 'warpkit', eyebrow: 'Portfolio', title: 'WarpKit' },
   { name: 'ori-lang', eyebrow: 'Portfolio', title: 'Ori' },
   { name: 'ori-term', eyebrow: 'Portfolio', title: 'ori-term' },

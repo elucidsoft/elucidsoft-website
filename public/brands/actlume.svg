@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>ActLume</title>
+  <rect width="64" height="64" fill="#224c40"/>
+  <path d="M16 48 28 16h8l12 32h-9l-2.2-7H26.9l-2.2 7H16Zm13.1-14h5.6L32 25l-2.9 9Z" fill="#f5f2e9"/>
+  <rect x="45" y="12" width="7" height="7" fill="#b64920"/>
+</svg>

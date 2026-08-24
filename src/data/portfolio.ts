@@ -1,5 +1,5 @@
 /**
- * The portfolio register — the single source of truth for all six products.
+ * The portfolio register — the single source of truth for all seven products.
  *
  * This module holds FACTS ONLY: URLs, licences, versions, packages, stage.
  * Every piece of human-readable prose lives in `./copy.ts` and is joined to
@@ -135,6 +135,28 @@ export const PRODUCTS: Product[] = [
       { label: 'Templating', href: 'https://cloudlayer.io/docs/templating/' },
       { label: 'Visual editor', href: 'https://cloudlayer.io/docs/visual-editor/' },
       { label: 'Blog', href: 'https://cloudlayer.io/blog/' },
+    ],
+  },
+  {
+    slug: 'actlume',
+    name: 'ActLume',
+    registerName: 'ActLume',
+    division: 'saas',
+    relationship: 'dba',
+    stage: 'coming-soon',
+    url: 'https://actlume.com/',
+    displayUrl: 'actlume.com',
+    brand: { logo: '/brands/actlume.svg', accent: '#f2a67f', ground: '#224c40', ink: '#0B1020' },
+    category: 'Regulatory incident reporting',
+    audience: 'Manufacturers subject to the EU Cyber Resilience Act',
+    tech: ['Bun', 'Svelte 5', 'OriJS', 'PostgreSQL'],
+    docsUrl: 'https://actlume.com/docs/',
+    links: [
+      { label: 'How it works', href: 'https://actlume.com/how-it-works/' },
+      { label: 'CRA Article 14 guide', href: 'https://actlume.com/cra-article-14/' },
+      { label: 'Pricing', href: 'https://actlume.com/pricing/' },
+      { label: 'Security', href: 'https://actlume.com/security/' },
+      { label: 'Blog', href: 'https://actlume.com/blog/' },
     ],
   },
   {
