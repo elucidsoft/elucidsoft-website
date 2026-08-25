@@ -3,11 +3,11 @@ import { COMPANY, SITE_URL } from '../data/company';
 
 const AUTH_MD_CONTENT = `# ${COMPANY.legalName} auth.md
 
-Agent registration and authentication discovery document for ${COMPANY.legalName} (\`${SITE_URL.replace(/^https?:\/\//, '')}\`) and associated services.
+Authentication and authorization discovery document for ${COMPANY.legalName} (\`${SITE_URL.replace(/^https?:\/\//, '')}\`) and associated services.
 
 ## Overview
 
-This document specifies authentication, authorization, and autonomous agent registration mechanisms for APIs and services published by ${COMPANY.legalName}.
+This document describes the OAuth discovery metadata published for APIs and services under ${COMPANY.legalName}.
 
 - **Issuer / Authorization Server:** ${SITE_URL}
 - **Protected Resource:** ${SITE_URL}
@@ -15,30 +15,13 @@ This document specifies authentication, authorization, and autonomous agent regi
 - **Authorization Server Metadata (ASM):** ${SITE_URL}/.well-known/oauth-authorization-server
 - **API Catalog (RFC 9727):** ${SITE_URL}/.well-known/api-catalog
 
-## Supported Agent Registration & Identity Flows
+The ASM currently publishes only an issuer identity and the scopes listed below. It does not yet publish an authorization endpoint, a token endpoint, or a registration endpoint, and no working OAuth token-issuance flow runs on this domain today.
 
-Autonomous AI agents, developer tools, and automated pipelines can authenticate and register using three supported identity models:
+## Agent Registration & Identity Flows
 
-### 1. Identity Assertion (ID-JAG)
-- **Identity Type:** \`identity_assertion\`
-- **Assertion Type:** \`urn:ietf:params:oauth:token-type:id-jag\`
-- **Credential Types:** \`bearer_token\`, \`api_key\`
-- **Registration Endpoint:** ${SITE_URL}/agent/register
-- **Revocation Endpoint:** ${SITE_URL}/agent/revoke
-- **Usage:** Submit a cryptographically signed JSON Assertion Grant (ID-JAG) to obtain a scoped access token for authorized API operations.
+${COMPANY.legalName} operates \`${SITE_URL.replace(/^https?:\/\//, '')}\` as a static site. It does not run an agent self-registration, credential-issuance, or revocation endpoint. There is no \`/agent/register\`, \`/agent/claim\`, or \`/agent/revoke\` route, and no identity-assertion, verified-email, or anonymous-access flow issues credentials today.
 
-### 2. Verified Email
-- **Identity Type:** \`identity_assertion\`
-- **Assertion Type:** \`verified_email\`
-- **Credential Types:** \`bearer_token\`, \`api_key\`
-- **Claim Endpoint:** ${SITE_URL}/agent/claim
-- **Usage:** Submit verified domain/email identity claims for agent credential provisioning.
-
-### 3. Anonymous / Scoped Public Access
-- **Identity Type:** \`anonymous\`
-- **Credential Types:** \`ephemeral_token\`, \`public_read\`
-- **Claim Endpoint:** ${SITE_URL}/agent/claim
-- **Usage:** Request ephemeral public-read access tokens for unauthenticated exploration of public catalogs and documentation.
+The PRM and ASM documents linked above describe protected-resource and authorization-server discovery only. An agent or tool reading this file should treat the scopes below as declarative, not as evidence of a working registration or token-issuance flow.
 
 ## Scopes Supported
 
@@ -48,6 +31,8 @@ Autonomous AI agents, developer tools, and automated pipelines can authenticate 
 - \`agent:write\`: Autonomous agent provisioning and registration operations.
 
 ## Bearer Token Usage
+
+This section describes the wire format a client would use once a token exists. No endpoint on this domain issues one today.
 
 Include the issued bearer token in the HTTP \`Authorization\` header:
 
